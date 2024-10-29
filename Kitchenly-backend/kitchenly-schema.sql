@@ -24,7 +24,7 @@ CREATE TABLE recipes (
 -- ingredients table; ingredients that are hosted on the website will go here.
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
-    ingredient_name TEXT NOT NULL
+    ingredient_name TEXT UNIQUE NOT NULL
 );
 
 -- categories table; lists a number of categories.

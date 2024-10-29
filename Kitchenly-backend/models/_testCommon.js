@@ -1,0 +1,58 @@
+const bcrypt = require("bcrypt");
+const db = require("../db.js");
+const { BCRYPT_WORK_FACTOR } = require("../config.js");
+
+const testRecipeIds = [];
+
+async function commonBeforeAll() {
+  // Clean out the tables
+  await db.query("DELETE FROM recipes_users");
+  await db.query("DELETE FROM recipes");
+  await db.query("DELETE FROM users");
+
+  // Insert test users
+  await db.query(`
+    INSERT INTO users (username, password, first_name, last_name, email, is_admin)
+    VALUES ('user1', $1, 'User1First', 'User1Last', 'user1@example.com', FALSE),
+           ('user2', $2, 'User2First', 'User2Last', 'user2@example.com', TRUE)
+  `, [
+    await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
+    await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
+  ]);
+
+  // Insert test recipes
+  const resultsRecipes = await db.query(`
+    INSERT INTO recipes (username, title, recipe_description, preparation_time, cooking_time, servings)
+    VALUES ('user1', 'Recipe1', 'Delicious dish 1', 10, 20, 2),
+           ('user2', 'Recipe2', 'Tasty meal 2', 15, 30, 4),
+           ('user1', 'Recipe3', 'Amazing dish 3', 5, 15, 1)
+    RETURNING id
+  `);
+  testRecipeIds.splice(0, 0, ...resultsRecipes.rows.map(r => r.id));
+
+  // Associate user with saved recipes
+  await db.query(`
+    INSERT INTO recipes_users (recipe_id, username)
+    VALUES ($1, 'user1'), ($2, 'user2')`,
+    [testRecipeIds[0], testRecipeIds[1]]);
+}
+
+async function commonBeforeEach() {
+  await db.query("BEGIN");
+}
+
+async function commonAfterEach() {
+  await db.query("ROLLBACK");
+}
+
+async function commonAfterAll() {
+  await db.end();
+}
+
+module.exports = {
+  commonBeforeAll,
+  commonBeforeEach,
+  commonAfterEach,
+  commonAfterAll,
+  testRecipeIds,
+};

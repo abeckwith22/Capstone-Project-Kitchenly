@@ -76,7 +76,7 @@ class User {
                  last_name,
                  email,
                  is_admin)
-             $VALUES ($1, $2, $3, $4, $5, $6)
+             VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
             [
                 username,
@@ -105,7 +105,7 @@ class User {
                     first_name AS "firstName",
                     last_name AS "lastName",
                     email,
-                    is_admin AS "is_admin"
+                    is_admin AS "isAdmin"
              FROM users
              ORDER BY username`,
         );
@@ -128,7 +128,7 @@ class User {
                     first_name AS "firstName",
                     last_name AS "lastName",
                     email,
-                    is_admin AS "isAdmin",
+                    is_admin AS "isAdmin"
              FROM users
              WHERE username = $1`,
             [username],
@@ -139,7 +139,7 @@ class User {
         if(!user) throw new NotFoundError(`No user: ${username}`);
 
         const userRecipeRes = await db.query( // [?] TODO: might need to fix this depending on what userRecipeRes actually returns
-            `SELECT r.recipe_id
+            `SELECT r.id
              FROM recipes AS r
              WHERE r.username = $1`, [username]
         );
@@ -200,7 +200,7 @@ class User {
 
     /** Delete given user from data; returns undefined.  */
     static async remove(username) {
-        let result = await db.query(
+        const result = await db.query(
             `DELETE
              FROM users
              WHERE username = $1
@@ -210,6 +210,8 @@ class User {
         const user = result.rows[0];
 
         if (!user) throw new NotFoundError(`No user: ${username}`);
+
+        return { user, message:"user deleted successfully!"};
     }
 
     /** Save a recipe: update db, returns undefined
@@ -218,30 +220,26 @@ class User {
      *  - recipeId: recipe id
      */
     static async saveRecipe(username, recipeId){
-        const preCheck = await db.query(
-            `SELECT id
-             FROM recipes
-             WHERE id = $1`, [recipeId]
-        );
-        const recipe = preCheck.rows[0];
 
-        if(!recipe) throw new NotFoundError(`No Recipe: ${recipeId}`);
+        // Avoiding nested queries fix
+        const checkExists = await db.query(`
+            SELECT u.username, r.id
+            FROM users AS u
+            JOIN recipes AS r ON r.id = $1
+            WHERE u.username = $2`
+        , [recipeId, username]);
 
-        const preCheck2 = await db.query(
-            `SELECT username
-             FROM users
-             WHERE username = $1`, [username]
-        );
+        if(checkExists.rows.length === 0) throw new NotFoundError(`Recipe or User not found: Recipe ID: ${recipeId}, Username: ${username}`);
 
-        const user = preCheck2.rows[0];
-
-        if (!user) throw new NotFoundError(`No username: ${username}`);
-
+        // if user attempts to save recipe twice do nothing.
         await db.query(
             `INSERT INTO recipes_users (recipe_id, username)
-             VALUES ($1, $2)`,
+             VALUES ($1, $2)
+             ON CONFLICT DO NOTHING`,
              [recipeId, username]
         );
+
+        return { username, recipeId, message:"Recipe saved successfully" };
     }
 }
 

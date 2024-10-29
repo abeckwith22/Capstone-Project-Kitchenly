@@ -18,9 +18,9 @@ describe("config can come from env", function () {
         delete process.env.BCRYPT_WORK_FACTOR;
         delete process.env.DATABASE_URL;
 
-        expect(config.getDatabaseUri()).toEqual("kitchenly");
+        expect(config.getDatabaseUri()).toEqual("postgresql:///kitchenly");
         process.env.NODE_ENV = "test";
 
-        expect(config.getDatabaseUri()).toEqual("kitchenly_test");
+        expect(config.getDatabaseUri()).toEqual("postgresql:///kitchenly_test");
     });
 });
