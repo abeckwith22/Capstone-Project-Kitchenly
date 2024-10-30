@@ -14,7 +14,7 @@ class Category {
         const result = await db.query(
             `INSERT INTO categories (category_name)
             VALUES ($1)
-            RETURNING id, category_name AS "categoryName"`, [data.categoryName]
+            RETURNING id, category_name`, [data.category_name]
         );
         let category = result.rows[0];
 
@@ -27,9 +27,9 @@ class Category {
      * 
      * returns [{id, category_name}, ...]
     */
-    static async findAll() {
+    static async findAll(category_name) {
         let query = `SELECT id, category_name
-                     FROM categories;
+                     FROM categories
         `;
         let whereExpressions = [];
         let queryValues = [];
@@ -53,9 +53,10 @@ class Category {
     }
 
     /** Given a category id, return data about category.
-     * Returns { id, category}
+     * Returns { id, category }
      * 
      * Throws NotFoundError if not found.
+     * 
      */
     static async get(id) {
         const categoryRes = await db.query(`
@@ -82,21 +83,22 @@ class Category {
      * 
      * Throws NotFoundError if not found.
     */
-    static async update(id, { categoryName }){
+    static async update(id, { category_name }){
         const duplicateCheck = await db.query(`
             SELECT category_name
-            FROM category_name
+            FROM categories
             WHERE category_name = $1
-        `, [categoryName]);
+        `, [category_name]);
 
-        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate category name: ${ categoryName }`);
+        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate category name: ${ category_name }`);
     
         const querySql = `UPDATE categories
                           SET category_name = $2
                           WHERE id = $1
+                          RETURNING id, category_name
         `;
 
-        const result = await db.query(querySql, [id, categoryName]);
+        const result = await db.query(querySql, [id, category_name]);
         const category = result.rows[0];
 
         if(!category) throw new NotFoundError(`No category: ${id}`);
@@ -119,6 +121,7 @@ class Category {
         const category = result.rows[0];
 
         if(!category) throw new NotFoundError(`No category: ${id}`);
+        return { id: id, message: "Category deleted successfully!"};
     }
 }
 

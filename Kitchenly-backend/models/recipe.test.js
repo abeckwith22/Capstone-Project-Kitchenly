@@ -147,7 +147,6 @@ describe("Recipe.update", () => {
 
 describe("Recipe.remove", () => {
     test("deletes a recipe", async () => {
-        // console.debug(testRecipeIds);
         const response = await Recipe.remove(testRecipeIds[0]);
         expect(response).toEqual(
             {

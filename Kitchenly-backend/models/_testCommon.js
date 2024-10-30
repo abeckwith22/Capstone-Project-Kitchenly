@@ -3,11 +3,15 @@ const db = require("../db.js");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 const testRecipeIds = [];
+const testIngredientIds = [];
+const testCategoriesIds = [];
 
 async function commonBeforeAll() {
   // Clean out the tables
   await db.query("DELETE FROM recipes_users");
   await db.query("DELETE FROM recipes");
+  await db.query("DELETE FROM ingredients");
+  await db.query("DELETE FROM categories");
   await db.query("DELETE FROM users");
 
   // Insert test users
@@ -20,6 +24,17 @@ async function commonBeforeAll() {
     await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
   ]);
 
+  // Insert test ingredients
+  const resultsIngredients = await db.query(`
+    INSERT INTO ingredients (ingredient_name)
+    VALUES ('ingredient1'),
+           ('ingredient2'),
+           ('ingredient3')
+    RETURNING id
+  `);
+  // adds ids to ingredient to references them later
+  testIngredientIds.splice(0, 0, ...resultsIngredients.rows.map(r => r.id));
+
   // Insert test recipes
   const resultsRecipes = await db.query(`
     INSERT INTO recipes (username, title, recipe_description, preparation_time, cooking_time, servings)
@@ -30,11 +45,22 @@ async function commonBeforeAll() {
   `);
   testRecipeIds.splice(0, 0, ...resultsRecipes.rows.map(r => r.id));
 
+  // Insert test categories
+  const resultsCategories = await db.query(`
+    INSERT INTO categories (category_name)
+    VALUES ('category1'),
+           ('category2'),
+           ('category3')
+    RETURNING id
+  `);
+  testCategoriesIds.splice(0, 0, ...resultsCategories.rows.map(r => r.id));
+
   // Associate user with saved recipes
   await db.query(`
     INSERT INTO recipes_users (recipe_id, username)
     VALUES ($1, 'user1'), ($2, 'user2')`,
     [testRecipeIds[0], testRecipeIds[1]]);
+  
 }
 
 async function commonBeforeEach() {
@@ -55,4 +81,6 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   testRecipeIds,
+  testIngredientIds,
+  testCategoriesIds,
 };

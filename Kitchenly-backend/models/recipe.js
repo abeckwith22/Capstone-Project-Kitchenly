@@ -73,8 +73,8 @@ class Recipe {
      * 
      * returns { id, username, title, description, preparation_time, cooking_time, servings, created_at };
      * 
-     * - [ ] TODO: Add tags feature as a list of tags associated with recipe [{ id, tag_name }, ...]
      * Throws NotFoundError if not found.
+     * - [ ] TODO: Add an ingredients join so that it lists the ingredients provided for the actual recipe.
      * 
     **/
     static async get(id){

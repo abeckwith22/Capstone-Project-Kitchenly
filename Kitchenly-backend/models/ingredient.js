@@ -14,7 +14,7 @@ class Ingredient {
         const result = await db.query(
             `INSERT INTO ingredients (ingredient_name)
             VALUES ($1)
-            RETURNING id, ingredient_name AS "ingredientName"`, [data.ingredientName]
+            RETURNING id, ingredient_name`, [data.ingredient_name]
         );
         let ingredient = result.rows[0];
 
@@ -22,14 +22,12 @@ class Ingredient {
     }
 
     /** Find all ingredients (optional filter on searchFilters) 
-     * searchFilters (all optional)
-     * - ingredient_name
      * 
      * returns [{id, ingredient_name}, ...]
     */
-    static async findAll() {
+    static async findAll(ingredient_name) {
         let query = `SELECT id, ingredient_name
-                     FROM ingredients;
+                     FROM ingredients
         `;
         let whereExpressions = [];
         let queryValues = [];
@@ -72,7 +70,7 @@ class Ingredient {
         return ingredient;
     }
 
-    /** Update ingredient data with ingredient and `data` 
+    /** Update ingredient data with ingredient id and `data` 
      * This shouldn't be a partial update because we're only changing ingredient_name, can't have duplicates
      * 
      * Data must include { ingredient_name }
@@ -82,21 +80,23 @@ class Ingredient {
      * 
      * Throws NotFoundError if not found.
     */
-    static async update(id, { ingredientName }){
+    static async update(id, { ingredient_name }){
         const duplicateCheck = await db.query(`
             SELECT ingredient_name
             FROM ingredients
             WHERE ingredient_name = $1
-        `, [ingredientName]);
+        `, [ingredient_name]);
 
-        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate ingredient name: ${ ingredientName }`);
+        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate ingredient name: ${ ingredient_name }`);
     
         const querySql = `UPDATE ingredients
                           SET ingredient_name = $2
                           WHERE id = $1
+                          RETURNING id,
+                                    ingredient_name
         `;
 
-        const result = await db.query(querySql, [id, ingredientName]);
+        const result = await db.query(querySql, [id, ingredient_name]);
         const ingredient = result.rows[0];
 
         if(!ingredient) throw new NotFoundError(`No ingredient: ${id}`);
@@ -119,6 +119,7 @@ class Ingredient {
         const ingredient = result.rows[0];
 
         if(!ingredient) throw new NotFoundError(`No ingredient: ${id}`);
+        return { id: id, message: "Ingredient deleted successfully!"};
     }
 }
 
