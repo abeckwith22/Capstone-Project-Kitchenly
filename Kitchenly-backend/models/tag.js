@@ -14,7 +14,7 @@ class Tag {
         const result = await db.query(
             `INSERT INTO tags (tag_name)
             VALUES ($1)
-            RETURNING id, tag_name AS "tagName"`, [data.tag_name]
+            RETURNING id, tag_name`, [data.tag_name]
         );
         let tag = result.rows[0];
 
@@ -27,10 +27,10 @@ class Tag {
      * 
      * returns [{id, tag_name}, ...]
     */
-    static async findAll({ tag_name } = {}) { // [ ] FIX: Set this findAll function for references recipes with tag_name
-        let query = `SELECT id
+    static async findAll(tag_name) { // [ ] FIX: Set this findAll function for references recipes with tag_name
+        let query = `SELECT id,
                             tag_name
-                     FROM tags;
+                     FROM tags
         `;
         let whereExpressions = [];
         let queryValues = [];
@@ -63,7 +63,7 @@ class Tag {
     static async get(id) {
         const tagRes = await db.query(`
             SELECT id,
-                   tag_name AS "tagName"
+                   tag_name
             FROM tags
             WHERE id = $1
         `, [id]);
@@ -82,24 +82,26 @@ class Tag {
      * 
      * Throws NotFoundError if not found.
     */
-    static async update(id, { tagName }){
+    static async update(id, { tag_name }){
         const duplicateCheck = await db.query(`
             SELECT tag_name
-            FROM users
-            WHERE username = $1
-        `, [tagName]);
+            FROM tags
+            WHERE tag_name = $1
+        `, [tag_name]);
 
-        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate tag_name: ${ tagName }`);
+        if(duplicateCheck.rows[0]) throw new BadRequestError(`Duplicate tag name: ${ tag_name }`);
     
         const querySql = `UPDATE tags
                           SET tag_name = $2
                           WHERE id = $1
+                          RETURNING id,
+                                    tag_name
         `;
 
-        const result = await db.query(querySql, [id, tagName]);
+        const result = await db.query(querySql, [id, tag_name]);
         const tag = result.rows[0];
 
-        if(!tag) throw new NotFoundError(`No tag: ${id}`);
+        if(!tag) throw new NotFoundError(`No tag id: ${id}`);
 
         return tag;
     }
@@ -119,6 +121,7 @@ class Tag {
         const tag = result.rows[0];
 
         if(!tag) throw new NotFoundError(`No tag: ${id}`);
+        return { id: id, message: "Tag deleted successfully!" };
     }
 }
 

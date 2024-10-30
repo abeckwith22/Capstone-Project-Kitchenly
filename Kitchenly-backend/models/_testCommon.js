@@ -5,6 +5,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 const testRecipeIds = [];
 const testIngredientIds = [];
 const testCategoriesIds = [];
+const testTagIds = [];
 
 async function commonBeforeAll() {
   // Clean out the tables
@@ -13,6 +14,7 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM ingredients");
   await db.query("DELETE FROM categories");
   await db.query("DELETE FROM users");
+  await db.query("DELETE FROM tags");
 
   // Insert test users
   await db.query(`
@@ -55,12 +57,21 @@ async function commonBeforeAll() {
   `);
   testCategoriesIds.splice(0, 0, ...resultsCategories.rows.map(r => r.id));
 
+  // Insert test tags
+  const resultTags = await db.query(`
+    INSERT INTO tags (tag_name)
+    VALUES ('tag1'),
+           ('tag2'),
+           ('tag3')
+    RETURNING id
+  `);
+  testTagIds.splice(0, 0, ...resultTags.rows.map(r => r.id));
+
   // Associate user with saved recipes
   await db.query(`
     INSERT INTO recipes_users (recipe_id, username)
     VALUES ($1, 'user1'), ($2, 'user2')`,
     [testRecipeIds[0], testRecipeIds[1]]);
-  
 }
 
 async function commonBeforeEach() {
@@ -83,4 +94,5 @@ module.exports = {
   testRecipeIds,
   testIngredientIds,
   testCategoriesIds,
+  testTagIds,
 };
