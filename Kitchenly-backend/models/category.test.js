@@ -18,11 +18,11 @@ afterAll(commonAfterAll);
 describe("Category.create", () => {
     test("creates a new category", async () => {
         const category = await Category.create({
-            category_name: "category4",
+            category_name: "category11",
         });
         expect(category).toEqual(
             expect.objectContaining({
-                category_name: "category4",
+                category_name: "category11",
             })
         );
     });

@@ -18,11 +18,11 @@ afterAll(commonAfterAll);
 describe("Tag.create", () => {
     test("creates a new tag", async () => {
         const tag = await Tag.create({
-            tag_name: "tag4",
+            tag_name: "tag11",
         });
         expect(tag).toEqual(
             expect.objectContaining({
-                tag_name: "tag4",
+                tag_name: "tag11",
             })
         );
     });
