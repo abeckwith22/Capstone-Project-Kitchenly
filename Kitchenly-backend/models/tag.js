@@ -123,6 +123,9 @@ class Tag {
         if(!tag) throw new NotFoundError(`No tag: ${id}`);
         return { id: id, message: "Tag deleted successfully!" };
     }
+
+    static async searchRecipesByTag(tag_name){
+    }
 }
 
 module.exports = Tag;

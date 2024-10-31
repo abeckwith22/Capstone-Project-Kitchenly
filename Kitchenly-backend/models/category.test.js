@@ -31,6 +31,7 @@ describe("Category.create", () => {
 describe("Category.findAll", () => {
     test("retrieves all categories", async () => {
         const categories = await Category.findAll();
+        expect(categories.length).toEqual(10);
         expect(categories).toEqual(expect.arrayContaining([
             expect.objectContaining({
                 category_name: "category1",

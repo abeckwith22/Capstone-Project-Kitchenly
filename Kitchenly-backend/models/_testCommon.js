@@ -52,7 +52,14 @@ async function commonBeforeAll() {
     INSERT INTO categories (category_name)
     VALUES ('category1'),
            ('category2'),
-           ('category3')
+           ('category3'),
+           ('category4'),
+           ('category5'),
+           ('category6'),
+           ('category7'),
+           ('category8'),
+           ('category9'),
+           ('category10')
     RETURNING id
   `);
   testCategoriesIds.splice(0, 0, ...resultsCategories.rows.map(r => r.id));
@@ -62,7 +69,14 @@ async function commonBeforeAll() {
     INSERT INTO tags (tag_name)
     VALUES ('tag1'),
            ('tag2'),
-           ('tag3')
+           ('tag3'),
+           ('tag4'),
+           ('tag5'),
+           ('tag6'),
+           ('tag7'),
+           ('tag8'),
+           ('tag9'),
+           ('tag10')
     RETURNING id
   `);
   testTagIds.splice(0, 0, ...resultTags.rows.map(r => r.id));
@@ -71,7 +85,23 @@ async function commonBeforeAll() {
   await db.query(`
     INSERT INTO recipes_users (recipe_id, username)
     VALUES ($1, 'user1'), ($2, 'user2')`,
-    [testRecipeIds[0], testRecipeIds[1]]);
+    [testRecipeIds[0], testRecipeIds[1]]
+  );
+  
+  // Associate tags with recipes
+  await db.query(`
+    INSERT INTO tags_recipes (tag_id, recipe_id)
+    VALUES ($1, $2), ($3, $4), ($5, $6)`,
+    [testTagIds[0], testRecipeIds[0], testTagIds[0], testRecipeIds[1], testTagIds[1], testRecipeIds[0]]
+  );
+  
+  // Associate categories with recipes
+  await db.query(`
+    INSERT INTO recipes_categories (recipe_id, category_id)
+    VALUES ($1, $2), ($3, $4), ($5, $6)`,
+    [testRecipeIds[0], testCategoriesIds[0], testRecipeIds[0], testCategoriesIds[1], testRecipeIds[1], testCategoriesIds[0]]
+  );
+
 }
 
 async function commonBeforeEach() {

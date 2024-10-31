@@ -6,6 +6,8 @@ const {
     commonAfterEach,
     commonAfterAll,
     testRecipeIds,
+    testCategoriesIds,
+    testTagIds,
 } = require("./_testCommon");
 
 const { NotFoundError, BadRequestError, UnauthorizedError } = require("../expressError");
@@ -113,6 +115,122 @@ describe("Recipe.get", () => {
             await Recipe.get(16000000); // I believe the max range for INT ids is somewhere around 16,000,000
         }catch(err){
             expect(err instanceof NotFoundError).toBeTruthy();
+        }
+    });
+});
+
+describe("Recipe.getRecipesByCategory", () => {
+    test("retrieve recipe by category id", async () => {
+        const recipe = await Recipe.getRecipesByCategory([testCategoriesIds[0]]);
+        expect(recipe).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                username: "user1",
+                title: "Recipe1",
+                recipe_description: "Delicious dish 1",
+                preparation_time: 10,
+                cooking_time: 20,
+                servings: 2,
+            }),
+            expect.objectContaining({
+                username: "user2",
+                title: "Recipe2",
+                recipe_description: "Tasty meal 2",
+                preparation_time: 15,
+                cooking_time: 30,
+                servings: 4,
+            }),
+        ]));
+    });
+    test("retrieve recipes by an array of category ids", async () => {
+        const c_ids = [testCategoriesIds[0], testCategoriesIds[1]];
+        const recipe = await Recipe.getRecipesByCategory(c_ids);
+        expect(recipe).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                username: "user1",
+                title: "Recipe1",
+                recipe_description: "Delicious dish 1",
+                cooking_time: 20,
+            }),
+        ]));
+    });
+});
+
+describe("Recipe.getRecipesByTags", () => {
+    test("retrieve recipe by tag name", async () => {
+        const recipe = await Recipe.getRecipesByTags([testTagIds[0]]);
+        expect(recipe).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                username: "user1",
+                title: "Recipe1",
+                recipe_description: "Delicious dish 1",
+                preparation_time: 10,
+                cooking_time: 20,
+                servings: 2,
+            }),
+            expect.objectContaining({
+                username: "user2",
+                title: "Recipe2",
+                recipe_description: "Tasty meal 2",
+                preparation_time: 15,
+                cooking_time: 30,
+                servings: 4,
+            }),
+        ]));
+    });
+    test("retrieve recipes by an array of tags", async () => {
+        const recipe = await Recipe.getRecipesByTags([testTagIds[0], testTagIds[1]]);
+        expect(recipe).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                username: "user1",
+                title: "Recipe1",
+                preparation_time: 10,
+                recipe_description: "Delicious dish 1"
+            }),
+        ]));
+    });
+});
+
+
+describe("Recipe.setRecipeToCategory", () => {
+    test("creates a singular recipes-to-categories relationship", async () => {
+        const rcRelation = await Recipe.setRecipeToCategory(testRecipeIds[0], [testCategoriesIds[3]]);
+        expect(rcRelation).toEqual(expect.objectContaining({
+            message: "recipes-to-categories relationships created successfully"
+        }));
+    });
+    test("creates multiple recipes-to-categories relationships", async () => {
+        const rcRelations = await Recipe.setRecipeToCategory(testRecipeIds[0], [testCategoriesIds[3], testCategoriesIds[4]]);
+        expect(rcRelations).toEqual(expect.objectContaining({
+            message: "recipes-to-categories relationships created successfully"
+        }));
+    });
+    test("throws BadRequestError if recipe_id/category_ids not found", async () => {
+        try {
+            await Recipe.setRecipeToCategory();
+        } catch (err) {
+            expect(err instanceof BadRequestError).toBeTruthy();
+        }
+    });
+});
+
+describe("Recipe.setTagsToRecipes", () => {
+    test("creates single tag-to-recipe relationship", async () => {
+        const trRelation = await Recipe.setTagsToRecipe([testTagIds[4]], testRecipeIds[0]);
+        expect(trRelation).toEqual(expect.objectContaining({
+            message: "tags-to-recipes relationships created successfully"
+        }));
+    });
+    test("creates multiple tags-to-recipes relationships", async () => {
+        const trRelations = await Recipe.setTagsToRecipe([testTagIds[3], testTagIds[4]], testRecipeIds[0]);
+        expect(trRelations).toEqual(expect.objectContaining({
+            message: "tags-to-recipes relationships created successfully"
+        }));
+    });
+    test("throws BadRequestError if recipe_id/tag_ids not found", async () => {
+        try {
+            await Recipe.setTagsToRecipe();
+        } catch (err) {
+            expect(err instanceof BadRequestError).toBeTruthy();
         }
     });
 });

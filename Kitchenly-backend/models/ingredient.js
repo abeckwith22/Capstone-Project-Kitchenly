@@ -121,6 +121,9 @@ class Ingredient {
         if(!ingredient) throw new NotFoundError(`No ingredient: ${id}`);
         return { id: id, message: "Ingredient deleted successfully!"};
     }
+
+    static async ingredientToRecipe(ingredient_id, recipe_id){
+    }
 }
 
 module.exports = Ingredient;

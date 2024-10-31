@@ -62,7 +62,9 @@ INSERT INTO tags_recipes (tag_id, recipe_id)
 VALUES 
     (1, 1),  -- Pancakes are #easy
     (2, 2),  -- Spaghetti is #quick
-    (3, 3);  -- Brownies are #healthy
+    (3, 3),  -- Brownies are #healthy
+    (2, 3),  -- Brownies are #quick
+    (1, 3);  -- Brownies are #easy
 
 -- Seed recipes_categories
 INSERT INTO recipes_categories (recipe_id, category_id)

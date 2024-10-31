@@ -30,8 +30,9 @@ describe("Tag.create", () => {
 
 describe("Tag.findAll", () => {
     test("retrieves all tags", async () => {
-        const Tags = await Tag.findAll();
-        expect(Tags).toEqual(expect.arrayContaining([
+        const tags = await Tag.findAll();
+        expect(tags.length).toEqual(10);
+        expect(tags).toEqual(expect.arrayContaining([
             expect.objectContaining({
                 tag_name: "tag1",
             }),
