@@ -9,7 +9,7 @@ const { NotFoundError } = require("./expressError"); // [ ] TODO: build expressE
 
 const { authenticateJWT } = require("./middleware/auth");
 // const authRoutes = require("./routes/auth");
-// const usersRoutes = require("./routes/users");
+const usersRoutes = require("./routes/users");
 // const recipesRoutes = require("./routes/recipes");
 
 const morgan = require("morgan")
