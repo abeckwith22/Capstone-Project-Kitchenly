@@ -31,7 +31,14 @@ async function commonBeforeAll() {
     INSERT INTO ingredients (ingredient_name)
     VALUES ('ingredient1'),
            ('ingredient2'),
-           ('ingredient3')
+           ('ingredient3'),
+           ('ingredient4'),
+           ('ingredient5'),
+           ('ingredient6'),
+           ('ingredient7'),
+           ('ingredient8'),
+           ('ingredient9'),
+           ('ingredient10')
     RETURNING id
   `);
   // adds ids to ingredient to references them later
@@ -100,6 +107,13 @@ async function commonBeforeAll() {
     INSERT INTO recipes_categories (recipe_id, category_id)
     VALUES ($1, $2), ($3, $4), ($5, $6)`,
     [testRecipeIds[0], testCategoriesIds[0], testRecipeIds[0], testCategoriesIds[1], testRecipeIds[1], testCategoriesIds[0]]
+  );
+
+  // Associate ingredients with recipes
+  await db.query(`
+    INSERT INTO ingredients_recipes (recipe_id, ingredient_id)
+    VALUES ($1, $2), ($3, $4), ($5, $6)`, 
+    [testRecipeIds[0], testIngredientIds[0], testRecipeIds[1], testIngredientIds[1], testRecipeIds[1], testIngredientIds[0]]
   );
 
 }

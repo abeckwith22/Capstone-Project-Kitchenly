@@ -138,13 +138,13 @@ class User {
 
         if(!user) throw new NotFoundError(`No user: ${username}`);
 
-        const userRecipeRes = await db.query( // [?] TODO: might need to fix this depending on what userRecipeRes actually returns
-            `SELECT r.id
+        const userRecipeRes = await db.query( // [x] TODO: might need to fix this depending on what userRecipeRes actually returns
+            `SELECT r.*
              FROM recipes AS r
              WHERE r.username = $1`, [username]
         );
         
-        user.recipes = userRecipeRes.rows.map(a => a.recipe_id);
+        user.recipes = userRecipeRes.rows.map(a => a);
         return user;
     }
 

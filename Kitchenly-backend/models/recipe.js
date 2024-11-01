@@ -70,7 +70,7 @@ class Recipe {
 
     /** Given a recipe title, return data about recipe.
      * 
-     * returns { id, username, title, description, preparation_time, cooking_time, servings, created_at };
+     * returns { id, username, title, description, preparation_time, cooking_time, servings, created_at, ingredients, categories, tags };
      * 
      * Throws NotFoundError if not found.
      * - [ ] TODO: Add an ingredients join so that it lists the ingredients provided for the actual recipe.
@@ -95,8 +95,72 @@ class Recipe {
 
         if(!recipe) throw new NotFoundError(`No recipe id: ${id}`);
 
+        // get recipe ingredients
+        const ingredients = await this.getRecipeIngredients(id);
+        recipe.ingredients = ingredients;
+        
+        // get recipe categories
+        const categories = await this.getRecipeCategories(id);
+        recipe.categories = categories;
+        
+        // get recipe tags
+        const tags = await this.getRecipeTags(id);
+        recipe.tags = tags;
+
+        // console.debug(recipe);
+
         return recipe;
     };
+
+    /** Helper method to fetch selected recipes ingredients from database */
+    static async getRecipeIngredients(recipe_id){
+        let ingredients;
+        const res = await db.query(`
+            SELECT i.*
+            FROM ingredients AS i
+            JOIN ingredients_recipes AS ir ON (i.id=ir.ingredient_id)
+            WHERE ir.recipe_id=$1
+        `,[recipe_id]);
+
+        if(res){
+            ingredients = res.rows.map(i => i);
+        }
+
+        return ingredients;
+    }
+    /** Helper method to fetch selected recipes categories from database */
+    static async getRecipeCategories(recipe_id){
+        let categories;
+        const res = await db.query(`
+            SELECT c.*
+            FROM categories AS c
+            JOIN recipes_categories AS rc ON (c.id=rc.category_id)
+            WHERE rc.recipe_id=$1
+        `,[recipe_id]);
+
+        if(res){
+            categories = res.rows.map(c => c);
+        }
+
+        return categories;
+    }
+
+    /** Helper method to fetch selected recipes categories from database */
+    static async getRecipeTags(recipe_id){
+        let tags;
+        const res = await db.query(`
+            SELECT t.*
+            FROM tags AS t
+            JOIN tags_recipes AS tr ON (tr.tag_id=t.id)
+            WHERE tr.recipe_id=$1
+        `,[recipe_id]);
+
+        if(res){
+            tags = res.rows.map(t => t);
+        }
+
+        return tags;
+    }
 
     /** Update recipe data with `data`.
      * 
@@ -111,26 +175,65 @@ class Recipe {
     static async update(id, data) {
         if(data.username || data.id) throw new BadRequestError("Invalid data", data);
 
-        const { setCols, values } = sqlForPartialUpdate(data, {});
-        const idVarIdx = "$" + (values.length + 1);
+        // saves a copy of ingredients, categories, and tags, and deletes them from data for sqlForPartialUpdate to run properly
+        let dataIngredients = data.ingredients;
+        let dataCategories = data.categories;
+        let dataTags = data.tags;
 
-        const querySql = `UPDATE recipes
-                          SET ${setCols}
-                          WHERE id = ${idVarIdx}
-                          RETURNING id,
-                                    username,
-                                    title,
-                                    recipe_description,
-                                    preparation_time,
-                                    cooking_time,
-                                    servings,
-                                    created_at
-        `
-        const result = await db.query(querySql, [...values, id]);
+        if(dataIngredients && dataIngredients.length > 0) delete data.ingredients;
+        if(dataCategories && dataCategories.length > 0) delete data.categories;
+        if(dataTags && dataTags.length > 0) delete data.tags;
 
-        const recipe = result.rows[0];
+        let recipe;
 
-        if(!recipe) throw new NotFoundError(`No recipe: ${id}`);
+        // If all we want to do is change ingredients, categories, or tags, just skip this query
+        if(Object.keys(data).length > 0){
+            const { setCols, values } = sqlForPartialUpdate(data, {});
+            const idVarIdx = "$" + (values.length + 1);
+    
+            const querySql = `UPDATE recipes
+                              SET ${setCols}
+                              WHERE id = ${idVarIdx}
+                              RETURNING *
+            `
+            const result = await db.query(querySql, [...values, id]);
+    
+            recipe = result.rows[0];
+            
+            if(!recipe) throw new NotFoundError(`No recipe: ${id}`);
+        }else {
+            recipe = await Recipe.get(id);
+            console.debug("before update");
+            console.debug(recipe);
+        }
+        
+        // deletes, refreshes, recipe ingredients into database.
+        if(dataIngredients && dataIngredients.length > 0){
+            await this.removeIngredientsFromRecipe(id);
+            await this.setIngredientToRecipe(dataIngredients, id);
+            // get recipe ingredients
+            const ingredients = await this.getRecipeIngredients(id);
+            recipe.ingredients = ingredients;
+        }
+        // deletes and refreshes recipe categories into database.
+        if(dataCategories && dataCategories.length > 0){
+            await this.removeCategoriesFromRecipe(id);
+            await this.setRecipeToCategory(id, dataCategories);
+            // get recipe categories
+            const categories = await this.getRecipeCategories(id);
+            recipe.categories = categories;
+        }
+        // deletes and refreshes recipe tags into database.
+        if(dataTags && dataTags.length > 0){
+            await this.removeTagsToRecipe(id);
+            await this.setTagsToRecipe(dataTags, id);
+            // get recipe tags
+            const tags = await this.getRecipeTags(id);
+            recipe.tags = tags;
+        }
+        
+        console.debug("after update");
+        console.debug(recipe);
 
         return recipe;
     };
@@ -177,6 +280,29 @@ class Recipe {
         return sqlWhere;
     }
 
+    /** Creates ingredient-to-recipe relationship in ingredients_recipes
+     * - ingredient_id: array of ingredient ids
+     * - recipe_id: id of recipe
+     * 
+     * returns { recipe_id: recipe_id, ingredient_id: ingredient_id, message: "ingredient-to-recipe relationship created successfully" }
+     */
+    static async setIngredientToRecipe(ingredient_ids, recipe_id){
+        if(!recipe_id || !ingredient_ids) throw new BadRequestError("No ingredient_id or recipe_id");
+
+
+        const sqlValues = this.formatInsert(ingredient_ids);
+
+        const sqlQuery = `
+            INSERT INTO ingredients_recipes (recipe_id, ingredient_id)
+            VALUES ${sqlValues}
+            RETURNING recipe_id, ingredient_id
+        `;
+
+        const result = await db.query(sqlQuery, [recipe_id, ...ingredient_ids]);
+
+        return { ingredient_ids: ingredient_ids, recipe_id: recipe_id, message: "ingredients-to-recipes relationships created successfully" };
+    }
+
     /** Creates recipe-to-category relationship in recipes_categories 
      * - recipe_id: Id of recipe
      * - category_ids: Array of category_ids
@@ -196,7 +322,7 @@ class Recipe {
             INSERT INTO recipes_categories (recipe_id, category_id)
             VALUES ${sqlValues}
             RETURNING recipe_id, category_id
-        `
+        `;
 
         // console.debug(sqlQuery);
 
@@ -237,7 +363,44 @@ class Recipe {
         return { tag_ids: tag_ids, recipe_id, message: "tags-to-recipes relationships created successfully" };
     }
 
-    /** Retrives recipes from db with category or categories
+    /** helper method to remove ingredient realtions from a recipe. */
+    static async removeIngredientsFromRecipe(recipe_id){
+
+        const sqlQuery = `
+            DELETE FROM ingredients_recipes
+            WHERE recipe_id=$1
+        `;
+
+        await db.query(sqlQuery, [recipe_id]);
+
+        return 0;
+    }
+    
+    /** helper method to remove all categories from a recipe. */
+    static async removeCategoriesFromRecipe(recipe_id){
+        const sqlQuery = `
+            DELETE FROM recipes_categories 
+            WHERE recipe_id=$1
+        `;
+
+        await db.query(sqlQuery, [recipe_id]);
+
+        return 0;
+    }
+
+    /** helper method to remove all tags from a recipe. */
+    static async removeTagsToRecipe(recipe_id){
+        const sqlQuery = `
+            DELETE FROM tags_recipes 
+            WHERE recipe_id=$1
+        `;
+
+        await db.query(sqlQuery, [recipe_id]);
+
+        return 0;
+    }
+
+    /** Retrieves recipes from db with category or categories
      * Throws NotFoundError if categor(y/ies) doesn't exist
      *  - Note: For an array of category, if one category id doesn't exist, but another does, it shouldn't return a NotFoundError.
      *              at least that's what I'd like to implement...
@@ -269,7 +432,7 @@ class Recipe {
         return recipes;
     }
 
-    /** Retrives recipes from db with tag or tags 
+    /** Retrieves recipes from db with tag or tags 
      * Throws NotFoundError if tag(s) doesn't exist
      *  - Note: For an array of tags, if one tag id doesn't exist, but another does, it shouldn't return a NotFoundError.
      *              at least that's what I'd like to implement...

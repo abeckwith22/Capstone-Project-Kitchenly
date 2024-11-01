@@ -115,6 +115,32 @@ describe("User.get", () => {
       expect(err instanceof NotFoundError).toBeTruthy();
     }
   });
+
+  test("retrieves selected users submitted recipes", async () => {
+    const user = await User.get("user1");
+    expect(user).toEqual(
+      expect.objectContaining({
+        recipes: expect.arrayContaining([ // should be an array of recipe objects
+          expect.objectContaining({
+            username: "user1",
+            title: "Recipe1",
+            recipe_description: "Delicious dish 1",
+            preparation_time: 10,
+            cooking_time: 20,
+            servings: 2,
+          }),
+          expect.objectContaining({
+            username: "user1",
+            title: "Recipe3",
+            recipe_description: "Amazing dish 3",
+            preparation_time: 5,
+            cooking_time: 15,
+            servings: 1,
+          }),
+        ])
+      }),
+    );
+  });
 });
 
 describe("User.update", () => {

@@ -8,6 +8,7 @@ const {
     testRecipeIds,
     testCategoriesIds,
     testTagIds,
+    testIngredientIds,
 } = require("./_testCommon");
 
 const { NotFoundError, BadRequestError, UnauthorizedError } = require("../expressError");
@@ -116,6 +117,39 @@ describe("Recipe.get", () => {
         }catch(err){
             expect(err instanceof NotFoundError).toBeTruthy();
         }
+    });
+    test("retrieves ingredients array from recipe", async () => {
+        const recipe = await Recipe.get(testRecipeIds[1]);
+        expect(recipe).toEqual(expect.objectContaining({
+            ingredients: expect.arrayContaining([
+                expect.objectContaining({
+                    ingredient_name: "ingredient1"
+                }),
+                expect.objectContaining({
+                    ingredient_name: "ingredient2"
+                }),
+            ]),
+        }));
+    });
+    test("retrieves categories array from recipe", async () => {
+        const recipe = await Recipe.get(testRecipeIds[1]);
+        expect(recipe).toEqual(expect.objectContaining({
+            categories: expect.arrayContaining([
+                expect.objectContaining({
+                    category_name: "category1",
+                }),
+            ]),
+        }));
+    });
+    test("retrieves tags array from recipe", async () => {
+        const recipe = await Recipe.get(testRecipeIds[1]);
+        expect(recipe).toEqual(expect.objectContaining({
+            tags: expect.arrayContaining([
+                expect.objectContaining({
+                    tag_name: "tag1"
+                }),
+            ]),
+        }));
     });
 });
 
@@ -245,6 +279,49 @@ describe("Recipe.update", () => {
             preparation_time: 5,
             cooking_time: 15,
             servings: 1,
+        }));
+    });
+    test("updates recipe's ingredients", async () => {
+        const ingredientIds = [testIngredientIds[5], testIngredientIds[6]];
+        const updatedRecipe = await Recipe.update(testRecipeIds[0], { ingredients: ingredientIds });
+        expect(updatedRecipe).toEqual(expect.objectContaining({
+            ingredients: expect.arrayContaining([
+                expect.objectContaining({
+                    ingredient_name: "ingredient6",
+                }),
+                expect.objectContaining({
+                    ingredient_name: "ingredient7",
+                }),
+            ]),
+        }));
+    });
+    test("updates recipe's categories", async () => {
+        const category_ids = [testCategoriesIds[3], testCategoriesIds[4]];
+        const updatedRecipe = await Recipe.update(testRecipeIds[0], { categories: category_ids });
+        expect(updatedRecipe).toEqual(expect.objectContaining({
+            title: "Recipe1",
+            categories: expect.arrayContaining([
+                expect.objectContaining({
+                    category_name: "category4",
+                }),
+                expect.objectContaining({
+                    category_name: "category5",
+                }),
+            ]),
+        }));
+    });
+    test("updates recipe's tags", async () => {
+        const tagIds = [testTagIds[3], testTagIds[4]];
+        const updatedRecipe = await Recipe.update(testRecipeIds[0], { tags: tagIds});
+        expect(updatedRecipe).toEqual(expect.objectContaining({
+            tags: expect.arrayContaining([
+                expect.objectContaining({
+                    tag_name: "tag4",
+                }),
+                expect.objectContaining({
+                    tag_name: "tag5",
+                }),
+            ]),
         }));
     });
     test("throws BadRequestError if user tries to update username/id", async () => {
