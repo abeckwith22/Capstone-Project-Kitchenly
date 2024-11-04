@@ -108,6 +108,20 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async function (req, res, 
     } catch (err) {
         return next(err);
     }
-})
+});
+
+/** POST /[username]/recipe/[recipe_id] => { recipe_id: "saved successfully" }
+ * 
+ * Authorization required: admin or same-user-as-:username
+ * 
+*/
+router.post("/:username/recipe/:recipe_id", ensureCorrectUserOrAdmin, async function (req, res, next) {
+    try {
+        const result = await User.saveRecipe(req.params.username, req.params.recipe_id);
+        return res.json(result);
+    } catch (err) {
+        return next(err);
+    }
+});
 
 module.exports = router;

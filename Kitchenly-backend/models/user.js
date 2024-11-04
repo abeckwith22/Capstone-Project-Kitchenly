@@ -26,10 +26,10 @@ class User {
         const result = await db.query(
             `SELECT username,
                     password,
-                    first_name AS "firstName",
-                    last_name AS "lastName",
+                    first_name,
+                    last_name,
                     email,
-                    is_admin AS "isAdmin"
+                    is_admin
              FROM users
              WHERE username = $1`,
              [username],
@@ -54,7 +54,7 @@ class User {
      * 
      * Throws BadRequestError on duplicates
     */
-    static async register({ username, password, firstName, lastName, email, isAdmin }) {
+    static async register({ username, password, first_name, last_name, email, is_admin}) {
         const duplicateCheck = await db.query(
             `SELECT username
              FROM users
@@ -77,14 +77,14 @@ class User {
                  email,
                  is_admin)
              VALUES ($1, $2, $3, $4, $5, $6)
-             RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
+             RETURNING username, first_name, last_name, email, is_admin`,
             [
                 username,
                 hashedPassword,
-                firstName,
-                lastName,
+                first_name,
+                last_name,
                 email,
-                isAdmin,
+                is_admin,
             ],
         );
 
@@ -102,10 +102,10 @@ class User {
     static async findAll() {
         const result = await db.query(
             `SELECT username,
-                    first_name AS "firstName",
-                    last_name AS "lastName",
+                    first_name,
+                    last_name,
                     email,
-                    is_admin AS "isAdmin"
+                    is_admin
              FROM users
              ORDER BY username`,
         );
@@ -125,10 +125,10 @@ class User {
         // get user response from db
         const userRes = await db.query(
             `SELECT username,
-                    first_name AS "firstName",
-                    last_name AS "lastName",
+                    first_name,
+                    last_name,
                     email,
-                    is_admin AS "isAdmin"
+                    is_admin
              FROM users
              WHERE username = $1`,
             [username],
@@ -173,9 +173,9 @@ class User {
         const { setCols, values } = sqlForPartialUpdate(
             data,
             {
-                firstName: "first_name",
-                lastName: "last_name",
-                isAdmin: "is_admin",
+                first_name: "first_name",
+                last_name: "last_name",
+                is_admin: "is_admin",
             }
         );
         const usernameVarIdx = "$" + (values.length + 1);
@@ -184,10 +184,10 @@ class User {
                           SET ${setCols}
                           WHERE username = ${usernameVarIdx}
                           RETURNING username,
-                                    first_name AS "firstName",
-                                    last_name AS "lastName",
+                                    first_name,
+                                    last_name,
                                     email,
-                                    is_admin AS "isAdmin"`;
+                                    is_admin`;
 
         const result = await db.query(querySql, [...values, username]);
         const user = result.rows[0];
@@ -217,9 +217,10 @@ class User {
     /** Save a recipe: update db, returns undefined
      * 
      *  - username: username saving the recipe
-     *  - recipeId: recipe id
+     *  - recipe_id: recipe id
      */
-    static async saveRecipe(username, recipeId){
+    static async saveRecipe(username, recipe_id){
+        if(!username || !recipe_id) throw new BadRequestError("Invalid username/recipe_id");
 
         // Avoiding nested queries fix
         const checkExists = await db.query(`
@@ -227,19 +228,19 @@ class User {
             FROM users AS u
             JOIN recipes AS r ON r.id = $1
             WHERE u.username = $2`
-        , [recipeId, username]);
+        , [recipe_id, username]);
 
-        if(checkExists.rows.length === 0) throw new NotFoundError(`Recipe or User not found: Recipe ID: ${recipeId}, Username: ${username}`);
+        if(checkExists.rows.length === 0) throw new NotFoundError(`Recipe or User not found: Recipe ID: ${recipe_id}, Username: ${username}`);
 
         // if user attempts to save recipe twice do nothing.
         await db.query(
             `INSERT INTO recipes_users (recipe_id, username)
              VALUES ($1, $2)
              ON CONFLICT DO NOTHING`,
-             [recipeId, username]
+             [recipe_id, username]
         );
 
-        return { username, recipeId, message:"Recipe saved successfully" };
+        return { username:username, recipe_id:+recipe_id, message:"Recipe saved successfully" };
     }
 }
 

@@ -9,10 +9,10 @@ const Ingredient = require("../models/ingredient.js");
 const Category = require("../models/category.js");
 const Tag = require("../models/tag.js");
 
-const testRecipeIds = [];
-const testIngredientIds = [];
-const testCategoriesIds = [];
-const testTagIds = [];
+const recipeIds = [];
+const ingredientIds = [];
+const categoriesIds = [];
+const tagIds = [];
 
 async function commonBeforeAll() {
   // clean out the tables
@@ -123,7 +123,7 @@ async function commonBeforeAll() {
   });
 
   // create recipes
-  await Recipe.create({
+  const recipe1 = await Recipe.create({
     username: "u1",
     title: "Cereal",
     recipe_description: "Milk and cereal of your choice into a bowl, mix and serve with a spoon!",
@@ -135,7 +135,7 @@ async function commonBeforeAll() {
     categories: [ "Breakfast" ]
   });
 
-  await Recipe.create({
+  const recipe2 = await Recipe.create({
     username: "u2",
     title: "Grilled Cheese",
     recipe_description: "A delicious, gooey, and savory meal",
@@ -147,7 +147,7 @@ async function commonBeforeAll() {
     categories: [ "Snack", "Lunch" ],
   });
 
-  await Recipe.create({
+  const recipe3 = await Recipe.create({
     username: "u1",
     title: "Tacos",
     recipe_description: "Prepare, beef, romaine lettuce, guacamole, sour cream, and a cheese of your choice and place them on a tortilla shell. Finally, wrap it up and enjoy!",
@@ -158,6 +158,8 @@ async function commonBeforeAll() {
     tags: [ "easy", "savory", "quick", "exciting" ],
     categories: [ "Lunch", "Dinner", "Mexican" ],
   });
+
+  recipeIds.push(recipe1.id, recipe2.id, recipe3.id);
 }
 
 async function commonBeforeEach() {
@@ -184,4 +186,5 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
+  recipeIds,
 };

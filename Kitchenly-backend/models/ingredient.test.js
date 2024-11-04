@@ -16,15 +16,26 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 describe("Ingredient.create", () => {
-    test("creates a new ingredient", async () => {
-        const ingredient = await Ingredient.create({
-            ingredient_name: "pesto",
+    test("creates 3 new ingredients", async () => {
+        const ingredients_arr = [
+            "pesto",
+            "apple",
+            "milk",
+        ];
+        const ingredients = await Ingredient.create({
+            ingredient_names: ingredients_arr
         });
-        expect(ingredient).toEqual(
+        expect(ingredients).toEqual(expect.arrayContaining([
             expect.objectContaining({
-                ingredient_name: "pesto",
-            })
-        );
+                ingredient_name: "pesto"
+            }),
+            expect.objectContaining({
+                ingredient_name: "apple"
+            }),
+            expect.objectContaining({
+                ingredient_name: "milk"
+            }),
+        ]));
     });
 });
 

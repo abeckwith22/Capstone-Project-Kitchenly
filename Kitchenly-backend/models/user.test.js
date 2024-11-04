@@ -22,10 +22,10 @@ describe("User.authenticate", () => {
     const user = await User.authenticate("user1", "password1");
     expect(user).toEqual({
       username: "user1",
-      firstName: "User1First",
-      lastName: "User1Last",
+      first_name: "User1First",
+      last_name: "User1Last",
       email: "user1@example.com",
-      isAdmin: false
+      is_admin: false
     });
   });
 
@@ -43,17 +43,17 @@ describe("User.register", () => {
     const user = await User.register({
       username: "testinguser",
       password: "password",
-      firstName: "New",
-      lastName: "User",
+      first_name: "New",
+      last_name: "User",
       email: "testinguser@example.com",
-      isAdmin: true
+      is_admin: true
     });
     expect(user).toEqual({
       username: "testinguser",
-      firstName: "New",
-      lastName: "User",
+      first_name: "New",
+      last_name: "User",
       email: "testinguser@example.com",
-      isAdmin: true
+      is_admin: true
     });
   });
 
@@ -62,10 +62,10 @@ describe("User.register", () => {
       await User.register({
         username: "testuser",
         password: "password",
-        firstName: "Test",
-        lastName: "User",
+        first_name: "Test",
+        last_name: "User",
         email: "testuser@example.com",
-        isAdmin: false
+        is_admin: false
       });
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();
@@ -79,17 +79,17 @@ describe("User.findAll", () => {
     expect(users.length).toBeGreaterThanOrEqual(2);
     expect(users).toEqual([
       { username: "user1", 
-        firstName: "User1First", 
-        lastName: "User1Last", 
+        first_name: "User1First", 
+        last_name: "User1Last", 
         email: "user1@example.com", 
-        isAdmin: false 
+        is_admin: false 
       },
       { 
         username: "user2", 
-        firstName: "User2First", 
-        lastName: "User2Last", 
+        first_name: "User2First", 
+        last_name: "User2Last", 
         email: "user2@example.com", 
-        isAdmin: true
+        is_admin: true
       },
     ]);
   });
@@ -101,10 +101,10 @@ describe("User.get", () => {
     expect(user).toEqual(
       expect.objectContaining({ 
         username: "user1", 
-        firstName: "User1First", 
-        lastName: "User1Last", 
+        first_name: "User1First", 
+        last_name: "User1Last", 
         email: "user1@example.com", 
-        isAdmin: false 
+        is_admin: false 
       }));
   });
 
@@ -145,21 +145,21 @@ describe("User.get", () => {
 
 describe("User.update", () => {
   test("updates a user's data", async () => {
-    const updatedUser = await User.update("user1", { firstName: "Updated" });
+    const updatedUser = await User.update("user1", { first_name: "Updated" });
     expect(updatedUser).toEqual(
       expect.objectContaining({
         username: "user1", 
-        firstName: "Updated", 
-        lastName: "User1Last", 
+        first_name: "Updated", 
+        last_name: "User1Last", 
         email: "user1@example.com", 
-        isAdmin: false 
+        is_admin: false 
       })
     );
   });
 
   test("throws NotFoundError if user not found", async () => {
     try {
-      await User.update("unknownuser", { firstName: "NoUser" });
+      await User.update("unknownuser", { first_name: "NoUser" });
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
     }

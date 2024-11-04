@@ -8,7 +8,7 @@ const cors = require("cors");
 const { NotFoundError } = require("./expressError"); // [ ] TODO: build expressError.js
 
 const { authenticateJWT } = require("./middleware/auth");
-// const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 // const recipesRoutes = require("./routes/recipes");
 
@@ -20,6 +20,10 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
+
+// routes
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
 
 // Handle 404 errors -- this matches everything.
 app.use(function (req, res, next) {
@@ -33,7 +37,7 @@ app.use(function (err, req, res, next) {
     const message = err.message;
 
     return res.status(status).json({
-        error: { message,status},
+        error: { message: message, status: status },
     });
 });
 

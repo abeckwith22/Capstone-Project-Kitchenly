@@ -6,19 +6,39 @@ const { NotFoundError, BadRequestError } = require("../expressError");
 // Related functions for ingredients.
 
 class Ingredient {
-    /** Create an ingredient (from data), update db, return new ingredient data. 
-     * data should be { ingredient_name }
-     * returns { id, ingredient_name }
+    /** Create an ingredient(s) (from data), update db, return new array of ingredients. 
+     * data should be [{ ingredient_name }, ...]
+     * returns [{ id, ingredient_name }, ...]
     */
     static async create(data) {
+        // if data is empty/doesn't exist and it's length is zero
+        // if(!data || !data.length > 0) throw new BadRequestError("Invalid/Empty data passed:", data);
+
+        const sqlValues = this.formatInsert(data.ingredient_names);
+
         const result = await db.query(
             `INSERT INTO ingredients (ingredient_name)
-            VALUES ($1)
-            RETURNING id, ingredient_name`, [data.ingredient_name]
+            VALUES ${sqlValues}
+            RETURNING *`, [...data.ingredient_names]
         );
-        let ingredient = result.rows[0];
 
-        return ingredient;
+        let ingredients = result.rows;
+
+        // console.debug(ingredients);
+
+        return ingredients;
+    }
+
+    /** quick helper method to insert values into create method for ingredients */
+    static formatInsert (values) {
+        let idx = 1;
+        let sqlInsert = ""
+        for(let i=0; i < values.length; i++){
+            if(i+1===values.length) sqlInsert += `( $${idx} )`
+            else sqlInsert += `( $${idx} ),`
+            idx++;
+        }
+        return sqlInsert;
     }
 
     /** Find all ingredients (optional filter on searchFilters) 

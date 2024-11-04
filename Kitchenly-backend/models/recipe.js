@@ -203,8 +203,6 @@ class Recipe {
             if(!recipe) throw new NotFoundError(`No recipe: ${id}`);
         }else {
             recipe = await Recipe.get(id);
-            console.debug("before update");
-            console.debug(recipe);
         }
         
         // deletes, refreshes, recipe ingredients into database.
@@ -231,9 +229,6 @@ class Recipe {
             const tags = await this.getRecipeTags(id);
             recipe.tags = tags;
         }
-        
-        console.debug("after update");
-        console.debug(recipe);
 
         return recipe;
     };
