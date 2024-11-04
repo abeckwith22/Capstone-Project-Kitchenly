@@ -44,14 +44,20 @@ describe("POST /ingredients", () => {
         });
     });
 
-    test("doesn't work for user", async () => {
+    test("works for user", async () => {
         const res = await request(app)
         .post(`/ingredients`)
         .send({
-            ingredient_name: "newIngredient",
+            ingredient_names: ["newIngredient"],
         })
         .set("Authorization", `Bearer ${u1Token}`);
-        expect(res.statusCode).toEqual(401)
+        expect(res.body).toEqual({
+            ingredients: expect.arrayContaining([
+                expect.objectContaining({
+                    ingredient_name: "newIngredient",
+                }),
+            ]),
+        });
     });
 });
 
