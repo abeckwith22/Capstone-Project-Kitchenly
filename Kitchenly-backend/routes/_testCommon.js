@@ -9,10 +9,11 @@ const Ingredient = require("../models/ingredient.js");
 const Category = require("../models/category.js");
 const Tag = require("../models/tag.js");
 
-const recipeIds = [];
 const ingredientIds = [];
-const categoriesIds = [];
+const categoryIds = [];
 const tagIds = [];
+const userIds = [];
+const recipeIds = [];
 
 async function commonBeforeAll() {
   // clean out the tables
@@ -24,6 +25,11 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM tags");
 
   const ingredients_arr = [
+    "Tortilla",
+    "Beef",
+    "Romaine Lettuce",
+    "Guacamole",
+    "Sour Cream",
     "Flour", 
     "White Egg",
     "Brown Egg",
@@ -36,6 +42,7 @@ async function commonBeforeAll() {
     "Heirloom Tomato",
     "Tomato Paste",
     "Whole Milk",
+    "Cereal",
     "Olive Oil",
     "White Bread",
     "Whole Wheat Bread",
@@ -45,6 +52,7 @@ async function commonBeforeAll() {
     "White Onion",
     "Red Onion",
     "Vidalia Onion",
+    "Cheddar Cheese",
     "Cheddar Jack Cheese",
     "Mozzerella Cheese",
     "Cream Cheese",
@@ -53,7 +61,6 @@ async function commonBeforeAll() {
     "Red Grapes",
     "Black Grapes",
     "Green Grapes",
-    "Guacamole",
     "Mild Salsa",
     "Medium Salsa",
     "Hot Salsa",
@@ -68,36 +75,43 @@ async function commonBeforeAll() {
     "Cinnamon",
     "Rosemary",
     "Thyme",
-  ]
+  ];
   
   // create ingredients
-  await Ingredient.create({ ingredient_names: ingredients_arr });
-
+  const ingredients = await Ingredient.create({ ingredient_names: ingredients_arr });
+  ingredientIds.push(...ingredients.map(i => i.id));
+  
   // create categories
-  await Category.create({ category_name : "Breakfast" });
-  await Category.create({ category_name : "Lunch" });
-  await Category.create({ category_name : "Dinner" });
-  await Category.create({ category_name : "Snack" });
-  await Category.create({ category_name : "American" });
-  await Category.create({ category_name : "Mexican" });
-  await Category.create({ category_name : "Chinese" });
-  await Category.create({ category_name : "Japanese" });
-  await Category.create({ category_name : "Indian" });
+  const category1 = await Category.create({ category_name : "Breakfast" });
+  const category2 = await Category.create({ category_name : "Lunch" });
+  const category3 = await Category.create({ category_name : "Dinner" });
+  const category4 = await Category.create({ category_name : "Snack" });
+  const category5 = await Category.create({ category_name : "American" });
+  const category6 = await Category.create({ category_name : "Mexican" });
+  const category7 = await Category.create({ category_name : "Chinese" });
+  const category8 = await Category.create({ category_name : "Japanese" });
+  const category9 = await Category.create({ category_name : "Indian" });
+
+  // push ids to arr
+  categoryIds.push(category1.id,category2.id,category3.id,category4.id,category5.id,category6.id,category7.id,category8.id,category9.id);
 
   // create tags
-  await Tag.create({ tag_name: "cool" });
-  await Tag.create({ tag_name: "fun" });
-  await Tag.create({ tag_name: "exciting" });
-  await Tag.create({ tag_name: "easy-to-make" });
-  await Tag.create({ tag_name: "sweet" });
-  await Tag.create({ tag_name: "savory" });
-  await Tag.create({ tag_name: "kid-friendly" });
-  await Tag.create({ tag_name: "good-for-breakfast" });
-  await Tag.create({ tag_name: "quick" });
-  await Tag.create({ tag_name: "challenging" });
+  const tag1 = await Tag.create({ tag_name: "cool" });
+  const tag2 = await Tag.create({ tag_name: "fun" });
+  const tag3 = await Tag.create({ tag_name: "exciting" });
+  const tag4 = await Tag.create({ tag_name: "easy-to-make" });
+  const tag5 = await Tag.create({ tag_name: "sweet" });
+  const tag6 = await Tag.create({ tag_name: "savory" });
+  const tag7 = await Tag.create({ tag_name: "kid-friendly" });
+  const tag8 = await Tag.create({ tag_name: "good-for-breakfast" });
+  const tag9 = await Tag.create({ tag_name: "quick" });
+  const tag10 = await Tag.create({ tag_name: "challenging" });
+
+  // push ids to arr
+  tagIds.push(tag1.id, tag2.id, tag3.id, tag4.id, tag5.id, tag6.id, tag7.id, tag8.id, tag9.id, tag10.id)
 
   // register test users
-  await User.register({
+  const user1 = await User.register({
     username: "u1",
     password: "password1",
     first_name: "U1F",
@@ -105,7 +119,7 @@ async function commonBeforeAll() {
     email: "user1@user.com",
     is_admin: false
   });
-  await User.register({
+  const user2 = await User.register({
     username: "u2",
     password: "password2",
     first_name: "U2F",
@@ -113,7 +127,7 @@ async function commonBeforeAll() {
     email: "user2@user.com",
     is_admin: false
   });
-  await User.register({
+  const user3 = await User.register({
     username: "u3",
     password: "password3",
     first_name: "U3F",
@@ -121,6 +135,7 @@ async function commonBeforeAll() {
     email: "user3@email.com",
     is_admin: false
   });
+  userIds.push(user1.id, user2.id, user3.id);
 
   // create recipes
   const recipe1 = await Recipe.create({
@@ -130,9 +145,9 @@ async function commonBeforeAll() {
     preparation_time: 5,
     cooking_time: 0,
     servings: 1,
-    ingredients: [ "Milk", "Rice Crispies" ],
-    tags: [ "easy", "good-for-breakfast", "quick", "kid-friendly" ],
-    categories: [ "Breakfast" ]
+    ingredients: [ ingredientIds[15], ingredientIds[16] ],
+    tags: [ tagIds[3], tagIds[7], tagIds[8], tagIds[6] ],
+    categories: [ categoryIds[0] ],
   });
 
   const recipe2 = await Recipe.create({
@@ -142,9 +157,9 @@ async function commonBeforeAll() {
     preparation_time: 10,
     cooking_time: 5,
     servings: 1,
-    ingredients: [ "Cheese", "White Bread" ],
-    tags: [ "easy", "savory", "quick", "kid-friendly" ],
-    categories: [ "Snack", "Lunch" ],
+    ingredients: [ ingredientIds[25], ingredientIds[17] ], // cheddar cheese, white bread
+    tags: [ tagIds[3], tagIds[5], tagIds[8], tagIds[6] ], // #easy, #savory, #quick, #kid-friendly
+    categories: [ categoryIds[3], categoryIds[1]], // snack, lunch
   });
 
   const recipe3 = await Recipe.create({
@@ -154,11 +169,12 @@ async function commonBeforeAll() {
     preparation_time: 10,
     cooking_time: 10,
     servings: 1,
-    ingredients: [ "Tortilla", "Beef", "Romaine Lettuce", "Guacamole", "Sour Cream", "Cheddar Cheese" ],
-    tags: [ "easy", "savory", "quick", "exciting" ],
-    categories: [ "Lunch", "Dinner", "Mexican" ],
+    ingredients: [ ingredientIds[0], ingredientIds[1], ingredientIds[2], ingredientIds[3], ingredientIds[25] ],
+    tags: [ tagIds[3], tagIds[5], tagIds[8], tagIds[2] ],
+    categories: [ categoryIds[1], categoryIds[2], categoryIds[5] ],
   });
 
+  // push ids to arr
   recipeIds.push(recipe1.id, recipe2.id, recipe3.id);
 }
 
@@ -186,5 +202,9 @@ module.exports = {
   u1Token,
   u2Token,
   adminToken,
+  ingredientIds,
+  categoryIds,
+  tagIds,
+  userIds,
   recipeIds,
 };

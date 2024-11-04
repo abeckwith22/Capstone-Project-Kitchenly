@@ -40,6 +40,41 @@ describe("Recipe.create", () => {
         );
     });
 
+    test("allows user to submit ingredients, categories, and tags to new recipe", async () => {
+        const recipe = await Recipe.create({
+            username: "user1",
+            title: "Recipe5",
+            recipe_description: "Delightful treat",
+            preparation_time: 5,
+            cooking_time: 5,
+            servings: 1,
+            ingredients: [testIngredientIds[0], testIngredientIds[1]],
+            categories: [testCategoriesIds[0]],
+            tags: [testTagIds[0]],
+        });
+        console.debug(recipe);
+        expect(recipe).toEqual(expect.objectContaining({
+            ingredients: expect.arrayContaining([
+                expect.objectContaining({
+                    id: testIngredientIds[0], 
+                }),
+                expect.objectContaining({
+                    id: testIngredientIds[1],
+                }),
+            ]),
+            categories: expect.arrayContaining([
+                expect.objectContaining({
+                    id: testCategoriesIds[0],
+                })
+            ]),
+            tags: expect.arrayContaining([
+                expect.objectContaining({
+                    id: testTagIds[0],
+                }),
+            ]),
+        }));
+    });
+
     test("allows for submitted null values for recipe_description, preparation_time, cooking_time, and servings", async () => {
         const recipe = await Recipe.create({
             username: "user1",

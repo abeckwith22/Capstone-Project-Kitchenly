@@ -3,7 +3,7 @@
     "$id": "http://example.com/example.json",
     "type": "object",
     "properties": {
-        "name": {
+        "ingredient_name": {
             "type": "string",
             "minLength": 1,
             "maxLength": 50 
@@ -11,6 +11,6 @@
     },
     "additionalProperties": false,
     "required": [
-        "name"
+        "ingredient_name"
     ]
 }

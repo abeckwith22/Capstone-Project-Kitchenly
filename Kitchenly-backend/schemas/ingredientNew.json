@@ -3,14 +3,12 @@
     "$id": "http://example.com/example.json",
     "type": "object",
     "properties": {
-        "title":{
-            "type":"string",
-            "minLength": 1,
-            "maxLength": 255
+        "ingredient_names":{
+            "type": "array"
         }
     },
     "additionalProperties": false,
     "required": [
-        "title"
+        "ingredient_names"
     ]
 }

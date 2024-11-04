@@ -8,7 +8,7 @@
             "minLength": 1,
             "maxLength": 255
         },
-        "description":{
+        "recipe_description":{
             "type":"string"
         },
         "preparation_time":{
@@ -19,10 +19,17 @@
         },
         "servings":{
             "type":"integer"
+        },
+        "ingredients":{
+            "type":"array"
+        },
+        "categories":{
+            "type":"array"
+        },
+        "tags":{
+            "type":"array"
         }
     },
     "additionalProperties": false,
-    "required": [
-        "title"
-    ]
+    "required": []
 }

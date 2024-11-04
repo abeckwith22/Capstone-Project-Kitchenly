@@ -9,17 +9,17 @@ describe("createToken", function () {
     expect(payload).toEqual({
       iat: expect.any(Number),
       username: "test",
-      isAdmin: false,
+      is_admin: false,
     });
   });
 
   test("works: admin", function () {
-    const token = createToken({ username: "test", isAdmin: true });
+    const token = createToken({ username: "test", is_admin: true });
     const payload = jwt.verify(token, SECRET_KEY);
     expect(payload).toEqual({
       iat: expect.any(Number),
       username: "test",
-      isAdmin: true,
+      is_admin: true,
     });
   });
 
@@ -30,7 +30,7 @@ describe("createToken", function () {
     expect(payload).toEqual({
       iat: expect.any(Number),
       username: "test",
-      isAdmin: false,
+      is_admin: false,
     });
   });
 });

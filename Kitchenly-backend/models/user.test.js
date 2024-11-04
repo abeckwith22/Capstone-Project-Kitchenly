@@ -192,7 +192,7 @@ describe("User.saveRecipe", () => {
     const response = await User.saveRecipe("user1", testRecipeIds[1]);
     expect(response).toEqual({
       username: "user1",
-      recipeId: testRecipeIds[1],
+      recipe_id: testRecipeIds[1],
       message: "Recipe saved successfully"
     });
   });

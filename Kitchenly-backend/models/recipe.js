@@ -45,6 +45,25 @@ class Recipe {
 
         let recipe = result.rows[0];
 
+        // set recipe ingredients
+        if(data.ingredients && data.ingredients.length > 0){
+            await this.setIngredientToRecipe([...data.ingredients],recipe.id);
+            recipe.ingredients = await this.getRecipeIngredients(recipe.id);
+        }
+        else recipe.ingredients = [];
+        // set recipe categories 
+        if(data.categories){
+            await this.setRecipeToCategory(recipe.id, [...data.categories]);
+            recipe.categories = await this.getRecipeCategories(recipe.id);
+        }
+        else recipe.categories = [];
+        // set recipe tags
+        if(data.tags){
+            await this.setTagsToRecipe([...data.tags], recipe.id);
+            recipe.tags = await this.getRecipeTags(recipe.id);
+        }
+        else recipe.tags = [];
+
         return recipe;
     };
 
@@ -167,7 +186,7 @@ class Recipe {
      * This is a "partial update" --- it's fine if data doesn't contain all
      * the fields; this only changes provided ones.
      * 
-     * Data can include: { title, description, preparation_time, cooking_time, servings }
+     * Data can include: { title, description, preparation_time, cooking_time, servings, categories, tags, ingredients }
      * 
      * Returns: updated { id, username, title, recipe_description, preparation_time, cooking_time, servings, created_at };
      * 
@@ -396,9 +415,10 @@ class Recipe {
     }
 
     /** Retrieves recipes from db with category or categories
-     * Throws NotFoundError if categor(y/ies) doesn't exist
-     *  - Note: For an array of category, if one category id doesn't exist, but another does, it shouldn't return a NotFoundError.
-     *              at least that's what I'd like to implement...
+     * 
+     * @param {Array} category_ids - an array of category ids to filter recipes for
+     * 
+     * @returns {Array} [ { id, username, title, recipe_description, ... }, ...]
     */
     static async getRecipesByCategory(category_ids){
         if(!category_ids || !Array.isArray(category_ids) || category_ids.length === 0) throw new BadRequestError("No category data");
@@ -408,7 +428,7 @@ class Recipe {
             WHERE id = ANY($1)
         `, [category_ids]);
 
-        if(exists.rows.length !== category_ids.length) throw new BadRequestError("Tag(s) are not found in database"); // meaning there's a tag that doesn't exist in db
+        if(exists.rows.length !== category_ids.length) throw new BadRequestError("Categor(y/ies) are not found in database"); // meaning there's a tag that doesn't exist in db
 
         const sqlWhere = this.formatIn(category_ids);
         const sqlQuery = `
@@ -428,9 +448,8 @@ class Recipe {
     }
 
     /** Retrieves recipes from db with tag or tags 
-     * Throws NotFoundError if tag(s) doesn't exist
-     *  - Note: For an array of tags, if one tag id doesn't exist, but another does, it shouldn't return a NotFoundError.
-     *              at least that's what I'd like to implement...
+     * @param {Array} tag_ids - Array of tag_ids to filter recipes for
+     * @returns [ { id, username, title, recipe_description, ... }, ...]
     */
     static async getRecipesByTags(tag_ids){ // - [ ] For now stick with 1 tag
         if(!tag_ids || !Array.isArray(tag_ids) || tag_ids.length === 0) throw new BadRequestError("No tag ids");

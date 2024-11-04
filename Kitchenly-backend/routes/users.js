@@ -41,7 +41,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 
-/** GET / => { users: [username, firstName, lastName, email }, ...]} 
+/** GET / => { users: [{ username, firstName, lastName, email }, ...]} 
  * Returns list of all users.
  * 
  * Authorization required: admin
@@ -59,7 +59,7 @@ router.get("/", ensureAdmin, async function (req, res, next) {
 
 /** GET /[username] => { user } 
  * Returns { username, firstName, lastName, isAdmin, recipes }
- *  where recipes is { id, title, recipe_description, preparation_time, cooking_time, servings }
+ *  where recipes is { id, title, recipe_description, preparation_time, cooking_time, servings, ingredients, categories, tags }
  * 
  * Authorization required: admin or same user-as-:username
 */
