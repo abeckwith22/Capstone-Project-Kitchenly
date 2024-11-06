@@ -1,7 +1,9 @@
 -- Seed users
 INSERT INTO users (username, password, first_name, last_name, email, is_admin)
 VALUES 
-    ('chef_john', 'hashed_password_1', 'John', 'Doe', 'john@example.com', TRUE),
+    ('testuser', '$2b$04$8HkQgMEhIWYjLB5tttTmseA0eidD7s5KwnEmpxWLRXB8DH84VufOy', 'test', 'user', 'testuser@example.com', FALSE), -- password: password
+    ('admin', '$2b$04$tqK/nf7B2uWufJ1G5eajjuKLLgiowF2bXMcc0GsiQGkXL74Kz5qd.', 'super', 'user', 'admin@example.com', TRUE), -- password: admin
+    ('chef_john', 'hashed_password_1', 'John', 'Doe', 'john@example.com', FALSE),
     ('foodie_jane', 'hashed_password_2', 'Jane', 'Smith', 'jane@example.com', FALSE),
     ('tasty_tom', 'hashed_password_3', 'Tom', 'Taylor', 'tom@example.com', FALSE);
 

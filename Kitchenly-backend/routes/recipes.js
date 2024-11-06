@@ -110,7 +110,7 @@ router.patch("/:username/:recipe_id", ensureCorrectUserOrAdmin, async function(r
             throw new BadRequestError(errs);
         }
         const result = await Recipe.update(req.params.recipe_id, req.body);
-        return res.status(201).json(result);
+        return res.status(201).json({ result });
     } catch (err) {
         return next(err);
     }
@@ -120,7 +120,7 @@ router.patch("/:username/:recipe_id", ensureCorrectUserOrAdmin, async function(r
 router.delete("/:username/:recipe_id", async function (req, res, next) {
     try {
         const result = await Recipe.remove(req.params.recipe_id);
-        return res.json(result);
+        return res.json({ result });
     } catch (err) {
         return next(err);
     }

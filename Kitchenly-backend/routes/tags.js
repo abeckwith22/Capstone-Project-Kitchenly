@@ -16,7 +16,7 @@ const router = express.Router();
 /** POST / { data: { tag_name } }
  * Returns { tag: { tag_id, tag_name } } 
  * 
- * Authorization required: admin
+ * Authorization required: logged-in
 */
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {

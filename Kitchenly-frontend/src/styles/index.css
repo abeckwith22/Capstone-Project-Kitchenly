@@ -3,4 +3,22 @@
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif, monospace;
+
+  /* color scheme */
+  --color-body-bg: #0d1117;
+  --color-bg: #161b22;
+  --color-font: #B6E3FF;
+  --color-font-hover: #93c1ff;
+  --color-button: #26a641;
+  --color-button-active: #006d32;
+
+  --color-form-bg: #161b22;
+  --color-form-label: #b6e3ff;
+  --color-form-input: #0d1117;
+  --color-form-border: #57606a;
+}
+
+body {
+  background-color: var(--color-body-bg);
+  min-height: 700px;
 }

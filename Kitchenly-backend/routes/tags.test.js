@@ -43,11 +43,19 @@ describe("POST /tags", () => {
         });
     });
 
-    test("doesn't work for user", async () => {
+    test("works for user", async () => {
         const res = await request(app)
         .post('/tags')
+        .send({
+            tag_name: "newTag",
+        })
         .set("Authorization", `Bearer ${u1Token}`);
-        expect(res.statusCode).toEqual(401);
+        expect(res.statusCode).toEqual(201);
+        expect(res.body).toEqual({
+            tag: expect.objectContaining({
+                tag_name: "newTag",
+            }),
+        });
     });
 });
 

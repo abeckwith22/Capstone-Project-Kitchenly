@@ -39,7 +39,7 @@ class User {
 
         if(user) {
             const isValid = await bcrypt.compare(password, user.password);
-            if(isValid){
+            if(isValid === true){
                 delete user.password;
                 return user;
             }

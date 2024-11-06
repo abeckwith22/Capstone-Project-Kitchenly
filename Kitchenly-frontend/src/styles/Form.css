@@ -1,0 +1,88 @@
+.FormContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: var(--color-font);
+    margin: 5em;
+}
+
+.FormContainerBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.Form {
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+    color: var(--color-font);
+    background-color: var(--color-form-bg);
+    font-weight: bold;
+}
+
+.FormTitleDiv {
+    text-align: center;
+    font-weight: lighter;
+    /* padding: 0.5em; */
+    margin-bottom: 1em;
+}
+
+.FormTitle {
+    font-weight: lighter;
+}
+
+.Form * {
+    color: var(--color-font);
+}
+
+.Form label {
+    display: block;
+}
+
+.FormDiv div {
+    margin:1em;
+}
+
+.FormInput input {
+    width: 100%;
+    padding: 0.4em;
+    border-style: none;
+    border-radius: 5px;
+    color: var(--color-font);
+    border: 1px solid var(--color-form-border);
+    background-color: var(--color-form-input);
+}
+
+.FormInput:target{
+    border-color: blue;
+}
+
+.FormButton {
+    background-color: var(--color-button);
+    border-style: none;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid var(--color-form-border);
+    width: 100%;
+    height: 2em;
+}
+
+.FormButton:hover {
+    cursor: pointer;
+    background-color: var(--color-button-active);
+}
+
+.FormLink {
+    text-align: center;
+    display: block;
+    padding: 0.5em;
+    margin: 1em;
+    text-decoration: none;
+    background-color: var(--color-button);
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+}
+
+.FormLink:hover {
+    background-color: var(--color-button-active);
+}

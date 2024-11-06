@@ -22,6 +22,12 @@ const NavBarElement = () => {
           </div>
           <ul className={menuOpen ? "open" : ""}>
                 <li>
+                  <NavLink to={"/signup"}>Sign up</NavLink>
+                </li>
+                <li>
+                  <NavLink to={"/login"}>Login</NavLink>
+                </li>
+                {/* <li>
                   <NavLink to={"/recipes"}>Saved Recipes</NavLink>
                 </li>
                 <li>
@@ -32,7 +38,7 @@ const NavBarElement = () => {
                 </li>
                 <li>
                   <NavLink to={"/logout"}>Log out</NavLink>
-                </li>
+                </li> */}
           </ul>
         </nav>
     </>

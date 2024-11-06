@@ -160,10 +160,12 @@ describe("PATCH /recipes/:username/:recipe_id", () => {
         })
         .set("authorization", `Bearer ${adminToken}`);
         expect(res.statusCode).toEqual(201);
-        expect(res.body).toEqual(expect.objectContaining({
-            username: "u1",
-            title: "Updated",
-        }));
+        expect(res.body).toEqual({
+            result: expect.objectContaining({
+                username: "u1",
+                title: "Updated",
+            })
+        });
     });
     
     test("works for same user", async () => {
@@ -174,10 +176,12 @@ describe("PATCH /recipes/:username/:recipe_id", () => {
         })
         .set("authorization", `Bearer ${u1Token}`);
         expect(res.statusCode).toEqual(201);
-        expect(res.body).toEqual(expect.objectContaining({
-            username: "u1",
-            title: "Updated",
-        }));
+        expect(res.body).toEqual({
+            result: expect.objectContaining({
+                username: "u1",
+                title: "Updated",
+            })
+        });
     });
 });
 
@@ -186,21 +190,25 @@ describe("DELETE /recipes/:username/:recipe_id", () => {
         const res = await request(app)
         .delete(`/recipes/u1/${recipeIds[0]}`)
         .set("Authorization", `Bearer ${adminToken}`)
-        expect(res.body).toEqual(expect.objectContaining({
-            username: "u1",
-            title: "Cereal",
-            message: "Recipe deleted successfully!",
-        }));
+        expect(res.body).toEqual({
+            result: expect.objectContaining({
+                username: "u1",
+                title: "Cereal",
+                message: "Recipe deleted successfully!",
+            }),
+        });
     });
 
     test("works for same user", async () => {
         const res = await request(app)
         .delete(`/recipes/u1/${recipeIds[0]}`)
         .set("Authorization", `Bearer ${adminToken}`)
-        expect(res.body).toEqual(expect.objectContaining({
-            username: "u1",
-            title: "Cereal",
-            message: "Recipe deleted successfully!",
-        }));
+        expect(res.body).toEqual({
+            result: expect.objectContaining({
+                username: "u1",
+                title: "Cereal",
+                message: "Recipe deleted successfully!",
+            }),
+        });
     })
 })

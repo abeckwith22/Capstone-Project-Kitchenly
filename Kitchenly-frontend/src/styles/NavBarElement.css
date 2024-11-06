@@ -1,15 +1,11 @@
-.active {
-    background-color: #1d4ed8;
-}
 
 .NavBarWrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #0f172a;
+    background-color: var(--color-bg);
     position: sticky;
     top: 0;
-
 }
 
 .NavBarWrapper .title {
@@ -17,7 +13,12 @@
     margin: 1rem;
     font-weight: bold;
     text-decoration: none;
-    color: white;
+    color: var(--color-font);
+    transition: color 0.5s;
+}
+
+.NavBarWrapper .title:hover {
+    color: var(--color-font-hover);
 }
 
 .NavBarWrapper ul {
@@ -30,15 +31,16 @@
 
 .NavBarWrapper ul li a {
     display: block;
+    font-weight: bold;
     text-decoration: none;
-    color: white;
+    color: var(--color-font);
     padding: 0.5rem;
     margin: 0 0.5rem;
     border-radius: 0.5rem;
 }
 
 .NavBarWrapper ul li a:not(.active):hover {
-    background-color: #172554;
+    background-color: var(--color-button);
 }
 
 .NavBarWrapper .menu {
@@ -55,7 +57,7 @@
 .NavBarWrapper .menu span {
     height: 0.4rem;
     width: 100%;
-    background-color: white;
+    background-color: black;
     border-radius: 0.2rem;
 }
 
