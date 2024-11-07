@@ -1,0 +1,9 @@
+#Footer {
+    position: fixed;
+    padding: 1em;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--color-bg);
+    color: var(--color-font);
+}

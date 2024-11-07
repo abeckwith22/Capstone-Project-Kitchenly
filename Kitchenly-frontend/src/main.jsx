@@ -11,11 +11,13 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import Home from "./routes/Home";
 import FormLogin from "./routes/FormLogin";
 import FormSignUp from "./routes/FormSignUp";
+import Logout from "./routes/Logout";
 
 // Protected routes
 
 /* error components */
 import ErrorElement from "./components/ErrorElement";
+import Profile from "./routes/Profile";
 
 const router = createBrowserRouter([
   {
@@ -35,9 +37,17 @@ const router = createBrowserRouter([
         element: <FormSignUp/>
       },
       {
+        path: "/logout",
+        element: <Logout/>
+      },
+      {
         path: "/",
         element: <ProtectedRoutes/>,
         children: [
+          {
+            path: "/profile",
+            element: <Profile/>
+          }
         ],
       }
     ],

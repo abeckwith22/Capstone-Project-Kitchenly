@@ -9,16 +9,17 @@
 }
 
 .NavBarWrapper .title {
+    font-family: "Pacifico", cursive;
     font-size: 1.5rem;
     margin: 1rem;
     font-weight: bold;
     text-decoration: none;
-    color: var(--color-font);
+    color: var(--color-font-title);
     transition: color 0.5s;
 }
 
 .NavBarWrapper .title:hover {
-    color: var(--color-font-hover);
+    color: var(--color-font-title-hover);
 }
 
 .NavBarWrapper ul {
@@ -57,7 +58,7 @@
 .NavBarWrapper .menu span {
     height: 0.4rem;
     width: 100%;
-    background-color: black;
+    background-color: var(--color-font);
     border-radius: 0.2rem;
 }
 

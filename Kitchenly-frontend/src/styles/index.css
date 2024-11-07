@@ -5,6 +5,8 @@
   font-family: Arial, Helvetica, sans-serif, monospace;
 
   /* color scheme */
+  --color-font-title: #ff054b;
+  --color-font-title-hover: #bb054b;
   --color-body-bg: #0d1117;
   --color-bg: #161b22;
   --color-font: #B6E3FF;

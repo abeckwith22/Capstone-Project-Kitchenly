@@ -1,9 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useState } from "react";
+import { useAuthContext } from "../helpers/AuthProvider";
 import "../styles/NavBarElement.css"
 
 const NavBarElement = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, loggedIn, isLoaded } = useAuthContext();
+
+  if(!isLoaded) return;
+
   return (
     <>
         <nav className="NavBarWrapper">
@@ -21,24 +26,25 @@ const NavBarElement = () => {
             <span></span>
           </div>
           <ul className={menuOpen ? "open" : ""}>
-                <li>
-                  <NavLink to={"/signup"}>Sign up</NavLink>
-                </li>
-                <li>
-                  <NavLink to={"/login"}>Login</NavLink>
-                </li>
-                {/* <li>
-                  <NavLink to={"/recipes"}>Saved Recipes</NavLink>
-                </li>
-                <li>
-                  <NavLink to={"/Categories"}>Categories</NavLink>
-                </li>
-                <li>
-                  <NavLink to={"/profile"}>Profile</NavLink>
-                </li>
-                <li>
-                  <NavLink to={"/logout"}>Log out</NavLink>
-                </li> */}
+            {loggedIn ? 
+            <>
+              <li>
+                <NavLink className="profile" to={"/profile"}>{user.username}</NavLink>
+              </li>
+              <li>
+                <NavLink to={"/logout"}>Logout</NavLink>
+              </li>
+            </>
+            : 
+            <>
+              <li>
+                <NavLink to={"/signup"}>Sign up</NavLink>
+              </li>
+              <li>
+                <NavLink to={"/login"}>Login</NavLink>
+              </li>
+            </>
+            }
           </ul>
         </nav>
     </>

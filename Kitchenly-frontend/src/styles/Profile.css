@@ -1,0 +1,6 @@
+.ProfileCard {
+    padding: 2em;
+    background-color: var(--color-bg);
+    border-radius: 5px;
+    border: 1px solid var(--color-form-border);
+}

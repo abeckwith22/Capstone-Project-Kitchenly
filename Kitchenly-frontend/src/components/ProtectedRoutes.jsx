@@ -1,9 +1,9 @@
 import { Outlet, Navigate } from "react-router-dom";
+import { useAuthContext } from "../helpers/AuthProvider";
+import { useContext } from "react";
 
 const ProtectedRoutes = () => {
-    const { isAuthenticated, setIsAuthenticated } = useState(true); // - [ ] FIX add authorization.
-    isLoaded = true; // placeholder for protected routes
-    loggedIn = isAuthenticated;
+    const { loggedIn, isLoaded } = useAuthContext(); // - [ ] FIX add authorization.
     
     if(!isLoaded){
         return;
