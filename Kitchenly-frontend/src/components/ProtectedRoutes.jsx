@@ -1,19 +1,10 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuthContext } from "../helpers/AuthProvider";
-import { useContext } from "react";
 
 const ProtectedRoutes = () => {
-    const { loggedIn, isLoaded } = useAuthContext(); // - [ ] FIX add authorization.
-    
-    if(!isLoaded){
-        return;
-    }
+    const { user } = useAuthContext();
 
-    if(loggedIn) {
-        return <Outlet/>
-    } else {
-        return <Navigate to={'/login'}/>
-    }
-}
+    return user ? <Outlet /> : <Navigate to="/login" />;
+};
 
 export default ProtectedRoutes;

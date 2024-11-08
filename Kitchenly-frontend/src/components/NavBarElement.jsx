@@ -5,7 +5,7 @@ import "../styles/NavBarElement.css"
 
 const NavBarElement = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, loggedIn, isLoaded } = useAuthContext();
+  const { user, isLoaded } = useAuthContext();
 
   if(!isLoaded) return;
 
@@ -26,10 +26,10 @@ const NavBarElement = () => {
             <span></span>
           </div>
           <ul className={menuOpen ? "open" : ""}>
-            {loggedIn ? 
+            {user.username ? 
             <>
               <li>
-                <NavLink className="profile" to={"/profile"}>{user.username}</NavLink>
+                <NavLink className="profile" to={"/profile"}>Profile</NavLink>
               </li>
               <li>
                 <NavLink to={"/logout"}>Logout</NavLink>

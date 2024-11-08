@@ -8,7 +8,7 @@ const FormLogin = () => {
         password: "",
     };
 
-    const { handleChange, handleLogin, formData } = useForm(INITIAL_DATA);
+    const { handleChange, handleLogin } = useForm(INITIAL_DATA);
 
     return (
         <div className="FormContainer">

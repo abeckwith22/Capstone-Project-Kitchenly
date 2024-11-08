@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/index.css";
-import { createBrowserRouter, Form, Navigate, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 /* route components */
 import App from "./routes/App";
@@ -41,7 +41,6 @@ const router = createBrowserRouter([
         element: <Logout/>
       },
       {
-        path: "/",
         element: <ProtectedRoutes/>,
         children: [
           {

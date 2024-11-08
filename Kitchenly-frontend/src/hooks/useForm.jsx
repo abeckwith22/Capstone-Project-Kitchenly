@@ -1,11 +1,12 @@
 import KitchenlyApi from "../../api"; 
 import { useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import useAuth from "./useAuth";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../helpers/AuthProvider";
 
 const useForm = (INITIAL_STATE={}) => {
     const [formData, setFormData] = useState(INITIAL_STATE);
-    const { login } = useAuth();
+    const navigate = useNavigate();
+    const { login, setLoggedIn } = useAuthContext();
     
     const handleChange = e => {
         const { name, value } = e.target;
@@ -17,16 +18,22 @@ const useForm = (INITIAL_STATE={}) => {
     
     const handleSignUp = async e => {
         e.preventDefault();
-        console.debug(formData);
         const token = await KitchenlyApi.registerUser(formData);
-        await login(token);
+        const authorized = await login(token);
+        if(authorized) {
+            setLoggedIn(true);
+        } 
+        navigate("/");
     }
 
     const handleLogin = async e => {
         e.preventDefault();
-        console.debug(formData);
         const token = await KitchenlyApi.getToken(formData);
-        await login(token);
+        const authorized = await login(token);
+        if(authorized) {
+            setLoggedIn(true);
+        }
+        navigate("/");
     }
 
     return { handleChange, handleSignUp, handleLogin, formData };

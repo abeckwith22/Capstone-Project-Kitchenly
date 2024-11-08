@@ -5,10 +5,12 @@ import { useContext } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const { loggedIn, user, isLoaded, login, logout } = useAuth();
+    const { loggedIn, setLoggedIn, user, isLoaded, login, logout } = useAuth();
+
+    if(!isLoaded) return;
 
     return (
-        <AuthContext.Provider value={{loggedIn, user, isLoaded, login, logout }}>
+        <AuthContext.Provider value={{loggedIn, setLoggedIn, user, isLoaded, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

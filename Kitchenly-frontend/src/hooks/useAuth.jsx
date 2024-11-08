@@ -1,56 +1,53 @@
 import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Remove the braces around jwtDecode if it's a default export
 import KitchenlyApi from "../../api";
-import { useNavigate } from "react-router-dom";
-
-// useAuth hook will check users authorization with token and won't load the page if failed.
 
 const useAuth = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [user, setUser] = useState({});
     const [isLoaded, setIsLoaded] = useState(false);
-    const navigate = useNavigate();
 
     // checks local storage for user; if exists, attempts to log in user with token
     const checkLocalStorage = async () => {
         const localToken = localStorage.getItem('token');
-        if(localToken) await login(localToken);
-    }
-    
+        if (localToken) await login(localToken);
+    };
+
+    useEffect(() => {
+        const authUser = async () => {
+            await checkLocalStorage();
+            setIsLoaded(true);
+        }
+        authUser();
+    }, []);
+
     // setLoggedIn to true, set user, save token to localStorage
     const login = async (token) => {
-        const { username } = jwtDecode(token);
-        console.debug(username);
-        KitchenlyApi.setToken(token);
-        const user = await KitchenlyApi.getUser(username);
-        console.debug(user);
-        if(!user.status) {
-            user.token = token;
-            localStorage.setItem("token", token);
-            setUser(user);
-            setLoggedIn(true);
-            navigate("/");
+        try {
+            const { username } = jwtDecode(token);
+            KitchenlyApi.setToken(token);
+            const user = await KitchenlyApi.getUser(username);
+            if (!user.status) {
+                user.token = token;
+                localStorage.setItem("token", token);
+                setUser(user);
+                return true;
+            }
+        } catch (error) {
+            console.error("Failed to log in:", error);
         }
-        setIsLoaded(true);
-    }
-    
+        return false;
+    };
+
     // setLoggedIn to false, delete user, delete token from localStorage
     const logout = () => {
+        setUser({});
         setLoggedIn(false);
-        localStorage.clear();
+        localStorage.removeItem("token");
         KitchenlyApi.setToken("");
-    }
-    
-    useEffect(() => {
-        console.debug("RUNNING USEEFFECT--------------------------------------------");
-        console.debug("isLoaded:", isLoaded);
-        console.debug("loggedIn:", loggedIn);
-        setIsLoaded(false);
-        checkLocalStorage();
-        setIsLoaded(true);
-    }, [loggedIn]);
+    };
 
-    return { loggedIn, user, isLoaded, login, logout };
-}
+    return { user, isLoaded, loggedIn, setLoggedIn, login, logout, checkLocalStorage, };
+};
 
 export default useAuth;
