@@ -28,7 +28,7 @@ class KitchenlyApi {
         try {
             return (await axios({ url, method, data, params, headers })).data;
         } catch (err) {
-            console.error("API Error:", err.response);
+            console.error("API Error:", err);
             let message = err.response.data.error.message;
             throw Array.isArray(message) ? message : [message];
         };
@@ -58,7 +58,6 @@ class KitchenlyApi {
     };
 
     /******************* User routes ****************************************/
-
 
     /** Registers user to database with { username, password, first_name, last_name, email } => { token } */
     static async registerUser(user) {
@@ -94,6 +93,24 @@ class KitchenlyApi {
         return res;
     };
 
+    /** Save Recipe to user
+     * 
+     * - Authorization required: admin or same-user
+    **/
+    static async saveRecipe(username, recipe_id) {
+        let res = await this.request(`users/${username}/${recipe_id}`, "post");
+        return res;
+    }
+
+    /** unsave Recipe to user 
+     * 
+     * - Authorization required: admin or same-user
+    **/
+    static async unsaveRecipe(username, recipe_id) {
+        let res = await this.request(`users/${username}/${recipe_id}`, "delete");
+        return res;
+    }
+
     /******************* Recipe routes ****************************************/
 
 
@@ -115,20 +132,47 @@ class KitchenlyApi {
         return res.recipe;
     };
 
+    /** Gets all recipes 
+     * 
+     * Also can use filter by title
+     * 
+     * @param {{ title: "" }} query
+     * 
+     * @returns {{ recipes: [] }} An array of recipes
+    */
+    static async getRecipes(query) {
+        try {
+            const res = await this.request(`recipes/`, query);
+            return res.recipes;
+        } catch (err) {
+            return [];
+        }
+    };
+
     /** Searches recipes by categories 
      * @param {array} categories - Array of category id(s)
      */
     static async getRecipesByCategory(categories) {
-        let res = await this.request(`recipes/filter/categories`, categories);
-        return res.recipes;
+        try {
+            const data = { category_ids: categories }
+            let res = await this.request(`recipes/filter/categories`, data);
+            return res.recipes;
+        } catch (err) {
+            return [];
+        }
     };
 
     /** Searches recipes by tags 
      * @param {array} tags - Array of tag id(s)
     */
     static async getRecipesByTags(tags) {
-        let res = await this.request(`recipes/filter/tags`, tags);
-        return res.recipes;
+        try {
+            const data = { tag_ids: tags }
+            let res = await this.request(`recipes/filter/tags`, data);
+            return res.recipes;
+        } catch (err) {
+            return [];
+        }
     };
 
     /** Updates recipe with data

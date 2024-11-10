@@ -141,6 +141,20 @@ describe("User.get", () => {
       }),
     );
   });
+
+  test("retrieves selected users favorited recipes", async () => {
+    // save a recipe first
+    await User.saveRecipe("user1", testRecipeIds[1]);
+    const user = await User.get("user1");
+
+    expect(user).toEqual(expect.objectContaining({
+      favorites: expect.arrayContaining([
+        expect.objectContaining({
+          title: "Recipe2",
+        }),
+      ]),
+    }));
+  });
 });
 
 describe("User.update", () => {
@@ -205,3 +219,17 @@ describe("User.saveRecipe", () => {
     }
   });
 });
+
+describe("user.unsaveRecipe", () => {
+  test("unsaves recipe for a user", async () => {
+    // save a recipe first
+    await User.saveRecipe("user1", testRecipeIds[1]);
+
+    const response = await User.unsaveRecipe("user1", testRecipeIds[1]);
+    expect(response).toEqual({
+      username: "user1",
+      recipe_id: testRecipeIds[1],
+      message: "Recipe unsaved successfully"
+    });
+  })
+})

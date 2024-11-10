@@ -1,0 +1,61 @@
+.RecipeDetailContainer {
+    display: flex;
+    margin: 2em;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    color: var(--color-font);
+}
+
+.Detail {
+    width: 50%;
+    padding: 2em;
+    border-radius: 5px;
+    background-color: var(--color-form-bg);
+}
+
+.DetailInfo {
+    margin-top: 1em;
+}
+
+.DetailIngredientDiv {
+    margin: 1em 0em;
+    
+}
+
+.DetailIngredients {
+    padding: 1em;
+    background-color: var(--color-form-input);
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+}
+
+.DetailMetaTime {
+    font-size: small;
+}
+
+.DetailCategories {
+    margin-left: 1em;
+    display: inline;
+    /* font-style: italic; */
+    color: var(--color-categories);
+}
+
+.DetailCategories span:hover {
+    cursor: pointer;
+    color: var(--color-categories-hover)
+}
+
+.DetailTags {
+    font-style: italic;
+    color: var(--color-tags);
+}
+
+.DetailTags span:hover {
+    cursor: pointer;
+    color: var(--color-tags-hover)
+}
+
+#RecipeDetailTitle {
+    display: inline;
+}

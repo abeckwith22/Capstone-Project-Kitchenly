@@ -104,7 +104,6 @@ describe("Recipe.findAll", () => {
     test("retrieves all recipes", async () => {
         const recipes = await Recipe.findAll();
         expect(recipes.length).toBeGreaterThanOrEqual(3);
-        expect(recipes instanceof Object);
         expect(recipes).toEqual(expect.arrayContaining([
             expect.objectContaining({
                 username: "user1",
@@ -129,6 +128,20 @@ describe("Recipe.findAll", () => {
                 preparation_time: 5,
                 cooking_time: 15,
                 servings: 1,
+            }),
+        ]));
+    });
+
+    test("retrieves all recipes with filter", async () => {
+        const recipes = await Recipe.findAll("1");
+        expect(recipes).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                username: "user1",
+                title: "Recipe1",
+                recipe_description: "Delicious dish 1",
+                preparation_time: 10,
+                cooking_time: 20,
+                servings: 2,
             }),
         ]));
     });

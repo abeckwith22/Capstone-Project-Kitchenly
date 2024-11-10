@@ -70,20 +70,29 @@ class Recipe {
 
     /** Find all recipes.
      * Returns [{ id, username, title, recipe_description, preparation_time, cooking_time, servings, created_at }, ...]
+     * Allows user to use optional filter of title to search by like-spelling recipes.
     **/
-    static async findAll() {
-        const result = await db.query(`
-            SELECT id,
-                   username,
-                   title,
-                   recipe_description,
-                   preparation_time,
-                   cooking_time,
-                   servings,
-                   created_at
-            FROM recipes
-            ORDER BY username`
-        );
+    static async findAll(title) {
+
+        let query = `SELECT * 
+                     FROM recipes
+        `;
+
+        let whereExpressions = [];
+        let queryValues = []
+
+        if(title !== undefined) {
+            queryValues.push(`%${title}%`);
+            whereExpressions.push(`title ILIKE $${queryValues.length}`);
+        }
+        if(whereExpressions.length > 0) {
+            query += " WHERE " + whereExpressions.join(" AND ");
+        }
+
+        // Finalize query and return results
+
+        query += " ORDER BY title";
+        const result = await db.query(query, queryValues);
         return result.rows;
     };
 

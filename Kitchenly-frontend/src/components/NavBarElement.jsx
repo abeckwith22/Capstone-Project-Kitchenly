@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import { useAuthContext } from "../helpers/AuthProvider";
 import "../styles/NavBarElement.css"
+import SearchBar from "../routes/SearchBar";
 
 const NavBarElement = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +16,7 @@ const NavBarElement = () => {
           <Link className="title" to={"/"}>
             Kitchenly
           </Link>
+          <SearchBar/>
           <div
             className="menu"
             onClick={() => {
@@ -28,6 +30,9 @@ const NavBarElement = () => {
           <ul className={menuOpen ? "open" : ""}>
             {user.username ? 
             <>
+              <li>
+                <NavLink className="newRecipe" to={"/recipes/new"}>New Recipe</NavLink>
+              </li>
               <li>
                 <NavLink className="profile" to={"/profile"}>Profile</NavLink>
               </li>

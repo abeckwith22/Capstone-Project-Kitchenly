@@ -1,0 +1,85 @@
+.RecipeList {
+    display: flex;
+    color: white;
+    list-style: none;
+}
+
+.RecipeCard {
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+    background-color: var(--color-form-bg);
+}
+
+.RecipeCardInfo {
+    background-color: var(--color-form-input);
+    border: 1px solid var(--color-form-border);
+    border-radius: 2px;
+    padding: 1em;
+}
+
+.Favorite {
+    display: inline-block;
+}
+
+.RecipeIsFavorite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    border: 2px solid var(--color-favorite-border);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
+.RecipeIsFavorite:hover {
+    background-color: var(--color-favorite-hover);
+}
+
+#starTrue {
+    color: var(--color-favorite-star);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.RecipeIsNotFavorite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    border: 2px solid var(--color-unfavorite-border);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}
+
+.RecipeIsNotFavorite:hover {
+    background-color: var(--color-unfavorite-hover);
+}
+
+#starFalse {
+    color: var(--color-unfavorite-star);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.RecipeCardTitle {
+    display: inline;
+    font-size:1.5em;
+}
+
+.RecipeCardCreated {
+    font-size: small;
+}
+
+.RecipeCardCreator {
+    font-weight: lighter;
+    margin-bottom: 1em;
+}
+
+.RecipeCard:hover {
+    cursor: pointer;
+    border-color: blue;
+}

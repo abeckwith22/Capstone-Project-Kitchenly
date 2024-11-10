@@ -10,6 +10,7 @@ const { BadRequestError } = require("../expressError");
 const Recipe = require("../models/recipe");
 const recipeNewSchema = require("../schemas/recipeNew.json");
 const recipeUpdateSchema = require("../schemas/recipeUpdate.json");
+const recipeSearchSchema = require("../schemas/recipeSearch.json");
 
 const router = express.Router();
 
@@ -20,6 +21,8 @@ const router = express.Router();
 
 router.post("/:username", ensureLoggedIn, ensureCorrectUserOrAdmin, async function (req, res, next) {
     try {
+        // add username
+        req.body.username = req.params.username;
         const validator = jsonschema.validate(req.body, recipeNewSchema);
         if(!validator.valid){
             const errs = validator.errors.map(e => e.stack);
@@ -39,14 +42,21 @@ router.post("/:username", ensureLoggedIn, ensureCorrectUserOrAdmin, async functi
 /** GET / => { recipes: [ { username, title, recipe_description,  }, ...] } 
  * Returns list of recipes
  * 
- * Has the option to filter search by [ title, tags, categories ]
+ * Has the option to filter search by [ title ]
  * 
  * Authorization required: logged-in
 */
 
 router.get("/", ensureLoggedIn, async function (req, res, next) {
     try {
-        const recipes = await Recipe.findAll();
+        const validator = jsonschema.validate(req.body, recipeSearchSchema);
+        const data = req.query;
+        if(!validator.valid){
+            const errs = validator.errors.map(e => e.stack);
+            console.debug(errs);
+            throw new BadRequestError(errs);
+        }
+        const recipes = await Recipe.findAll(data.title);
         return res.status(200).json({ recipes: recipes });
     } catch (err) {
         return next(err);
@@ -74,8 +84,8 @@ router.get("/search/:recipe_id", ensureLoggedIn, async function (req, res, next)
 
 router.get("/filter/categories", ensureLoggedIn, async function (req, res, next) {
     try {
-        const { category_ids } = req.body;
-        const recipes = await Recipe.getRecipesByCategory(category_ids);
+        const data = Object.keys(req.query).length > 0 ? req.query : req.body;
+        const recipes = await Recipe.getRecipesByCategory(data.category_ids);
         return res.json({ recipes });
     } catch (err) {
         return next(err);
@@ -89,8 +99,8 @@ router.get("/filter/categories", ensureLoggedIn, async function (req, res, next)
 
 router.get("/filter/tags", ensureLoggedIn, async function (req, res, next) {
     try {
-        const { tag_ids } = req.body;
-        const recipes = await Recipe.getRecipesByTags(tag_ids);
+        const data = Object.keys(req.query).length > 0 ? req.query : req.body;
+        const recipes = await Recipe.getRecipesByTags(data.tag_ids);
         return res.status(200).json({ recipes });
     } catch (err) {
         return next(err);

@@ -143,8 +143,19 @@ class User {
              FROM recipes AS r
              WHERE r.username = $1`, [username]
         );
+
+        user.recipes = userRecipeRes.rows.map(r => r);
         
-        user.recipes = userRecipeRes.rows.map(a => a);
+        const userSavedRecipeRes = await db.query(
+            `SELECT r.*
+             FROM recipes AS r
+             JOIN recipes_users AS ru ON (r.id=ru.recipe_id)
+             WHERE ru.username=$1
+            `, [username]
+        );
+        
+        user.favorites = userSavedRecipeRes.rows.map(r => r);
+
         return user;
     }
 
@@ -242,6 +253,32 @@ class User {
 
         return { username:username, recipe_id:+recipe_id, message:"Recipe saved successfully" };
     }
+
+    /** Deletes a user-recipe relationship from db, returns msg obj 
+     * 
+    */
+    static async unsaveRecipe(username, recipe_id) {
+        if(!username || !recipe_id) throw new BadRequestError("Invalid username/recipe_id");
+
+        // Avoiding nested queries fix
+        const checkExists = await db.query(`
+            SELECT u.username, r.id
+            FROM users AS u
+            JOIN recipes AS r ON r.id = $1
+            WHERE u.username = $2`
+        , [recipe_id, username]);
+
+        if(checkExists.rows.length === 0) throw new NotFoundError(`Recipe or User not found: Recipe ID: ${recipe_id}, Username: ${username}`);
+
+        // if user attempts to delete recipe twice do nothing.
+        await db.query(
+            `DELETE FROM recipes_users 
+             WHERE recipe_id = $1 AND username = $2`
+        , [recipe_id, username]);
+
+        return { username:username, recipe_id:+recipe_id, message:"Recipe unsaved successfully" };
+
+    } 
 }
 
 module.exports = User;

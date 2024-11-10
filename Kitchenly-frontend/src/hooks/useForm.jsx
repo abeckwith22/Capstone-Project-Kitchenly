@@ -6,10 +6,15 @@ import { useAuthContext } from "../helpers/AuthProvider";
 const useForm = (INITIAL_STATE={}) => {
     const [formData, setFormData] = useState(INITIAL_STATE);
     const navigate = useNavigate();
-    const { login, setLoggedIn } = useAuthContext();
+    const { user, login, setLoggedIn } = useAuthContext();
     
     const handleChange = e => {
-        const { name, value } = e.target;
+        let { name, value } = e.target;
+        const intTerms = ['preparation_time', 'cooking_time', 'servings'];
+
+        // sets value to integer if terms are included.
+        if(intTerms.includes(name)) value = +value;
+
         setFormData(formData => ({
             ...formData,
             [name]:value,
@@ -36,7 +41,21 @@ const useForm = (INITIAL_STATE={}) => {
         navigate("/");
     }
 
-    return { handleChange, handleSignUp, handleLogin, formData };
+    const handleSearch = async e => {
+        e.preventDefault();
+        const recipes = await KitchenlyApi.getRecipes(formData); 
+        setFormData(INITIAL_STATE);
+        navigate("/recipes", { state: { recipes: recipes }});
+    }
+
+    const handleCreateRecipe = async e => {
+        e.preventDefault();
+        const newRecipe = await KitchenlyApi.createRecipe(user.username, formData);
+        console.debug(newRecipe);
+        // setFormData(INITIAL_STATE);
+    }
+
+    return { handleChange, handleSignUp, handleLogin, handleSearch, handleCreateRecipe, formData };
 }
 
 export default useForm;

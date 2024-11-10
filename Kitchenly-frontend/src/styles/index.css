@@ -11,13 +11,37 @@
   --color-bg: #161b22;
   --color-font: #B6E3FF;
   --color-font-hover: #93c1ff;
+
+
   --color-button: #26a641;
   --color-button-active: #006d32;
 
+  --color-button-edit: #54AEFF;
+  --color-button-edit-hover: #328cdd;
+
+  --color-button-delete: #ff003b;
+  --color-button-delete-hover: #cc003b;
+  
   --color-form-bg: #161b22;
   --color-form-label: #b6e3ff;
   --color-form-input: #0d1117;
   --color-form-border: #57606a;
+
+  --color-tags: #54AEFF;
+  --color-tags-hover: #328cdd;
+  --color-categories: #57606A;
+  --color-categories-hover: #354048;
+
+  --color-favorite-bg: #ffffff;
+  --color-favorite-star: #fddf68;
+  --color-favorite-border: #fddf68;
+  --color-favorite-hover: #aaaaaa;
+
+
+  --color-unfavorite-border: #555555;
+  --color-unfavorite-bg: #555555;
+  --color-unfavorite-star: #555555;
+  --color-unfavorite-hover: #354048;
 }
 
 body {

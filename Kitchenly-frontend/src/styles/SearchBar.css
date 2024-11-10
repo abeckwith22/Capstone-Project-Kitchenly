@@ -1,0 +1,15 @@
+.SearchBarContainer {
+    width: 30%;
+}
+
+.SearchBar input {
+    padding: 0.5em;
+    width: 100%;
+    border-style: none;
+    border: 1px solid var(--color-form-border);
+    border-radius: 20px;
+    background-color: var(--color-form-bg);
+    color: var(--color-font);
+    font-size: large;
+    font-weight: bold;
+}

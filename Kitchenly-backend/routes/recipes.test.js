@@ -81,6 +81,23 @@ describe("GET /recipes", () => {
         });
     });
 
+    test("filter works", async () => {
+        const res = await request(app)
+        .get("/recipes")
+        .send({
+            title: "grilled"
+        })
+        .set("authorization", `Bearer ${u1Token}`);
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toEqual({
+            recipes: expect.arrayContaining([
+                expect.objectContaining({
+                    title: "Grilled Cheese"
+                }),
+            ]),
+        });
+    });
+
     test("unauth for anon", async () => {
         const res = await request(app)
         .get("/recipes")
