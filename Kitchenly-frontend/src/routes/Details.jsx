@@ -1,12 +1,35 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/Details.css";
 import KitchenlyApi from "../../api";
+import { useAuthContext } from "../helpers/AuthProvider";
+import { useState } from "react";
 
 const Details = () => {
     const navigate = useNavigate();
+    const [update, setUpdate] = useState(false);
+    const { user } = useAuthContext();
     const { state } = useLocation();
     const { recipe } = state;
 
+    const isFavorite = (id) => {
+        const favorites = user.favorites;
+        for(let r of favorites) {
+            if(r.id === id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const saveRecipe = async (id) => {
+        const res = await KitchenlyApi.saveRecipe(user.username, id);
+        setUpdate(!update);
+    }
+
+    const unsaveRecipe = async (id) => {
+        const res = await KitchenlyApi.unsaveRecipe(user.username, id);
+        setUpdate(!update);
+    }
 
     const formatDate = (time) => {
         const date = new Date(time);
@@ -35,11 +58,25 @@ const Details = () => {
         <div className="RecipeDetailContainer">
             <div id={recipe.id} className="Detail">
                 <div className="DetailMeta">
-                    <h1 id="RecipeDetailTitle">{recipe.title}</h1>
-                    <div className="DetailCategories">
-                        {recipe.categories.map(c => (
-                            <span onClick={async () => await gotoCategory(c.id)} key={c.id}>{c.category_name} </span>
-                        ))}
+                    <div className="DetailHeader">
+                        <h1 id="RecipeDetailTitle">{recipe.title}</h1>
+                        <div className="DetailCategories">
+                            {recipe.categories.map(c => (
+                                <span onClick={async () => await gotoCategory(c.id)} key={c.id}>{c.category_name} </span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="FavoriteContainer">
+                        {isFavorite(recipe.id) ? (
+                            <div onClick={() => unsaveRecipe(recipe.id)} className="Favorite RecipeIsFavorite">
+                                <span id="starTrue">&#9733;</span>
+                            </div>
+                        ) : 
+                        (
+                            <div onClick={() => saveRecipe(recipe.id)} className="Favorite RecipeIsNotFavorite">
+                                <span id="starFalse">&#9733;</span>
+                            </div>
+                        )}
                     </div>
                     <p><span className="DetailMetaUser">@{recipe.username}</span> <span className="DetailMetaTime">{formatDate(recipe.created_at)}</span></p>
                     <div className="DetailTags">

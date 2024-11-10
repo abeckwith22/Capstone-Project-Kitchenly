@@ -1,6 +1,6 @@
 .RecipeList {
     display: flex;
-    color: white;
+    color: var(--color-font);
     list-style: none;
 }
 
@@ -17,10 +17,6 @@
     border: 1px solid var(--color-form-border);
     border-radius: 2px;
     padding: 1em;
-}
-
-.Favorite {
-    display: inline-block;
 }
 
 .RecipeIsFavorite {

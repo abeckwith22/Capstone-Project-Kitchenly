@@ -23,6 +23,8 @@ import FormSignUp from "./routes/FormSignUp";
 
 /* error components */
 import ErrorElement from "./components/ErrorElement";
+import FormEditProfile from "./routes/FormEditProfile";
+import FormDeleteUser from "./routes/FormDeleteUser";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +55,14 @@ const router = createBrowserRouter([
             element: <Profile/>
           },
           {
+            path: "/users/:username/edit",
+            element: <FormEditProfile/>
+          },
+          {
+            path: "/users/:username/delete",
+            element: <FormDeleteUser/>,
+          },
+          {
             path: "/recipes",
             element: <RecipeList/>
           },
@@ -73,6 +83,7 @@ const router = createBrowserRouter([
             element: <FormCreateRecipe/>
           },
         ],
+        errorElement: <ErrorElement/>
       }
     ],
     errorElement: <ErrorElement/>

@@ -89,7 +89,7 @@ class KitchenlyApi {
      * - Authorization required: admin or same-user
     **/
     static async deleteUser(username) {
-        let res = await this.request(`users/${username}`, "delete");
+        let res = await this.request(`users/${username}`, {}, "delete");
         return res;
     };
 
@@ -98,7 +98,7 @@ class KitchenlyApi {
      * - Authorization required: admin or same-user
     **/
     static async saveRecipe(username, recipe_id) {
-        let res = await this.request(`users/${username}/${recipe_id}`, "post");
+        let res = await this.request(`users/${username}/recipe/${recipe_id}`, {}, "post");
         return res;
     }
 
@@ -107,7 +107,7 @@ class KitchenlyApi {
      * - Authorization required: admin or same-user
     **/
     static async unsaveRecipe(username, recipe_id) {
-        let res = await this.request(`users/${username}/${recipe_id}`, "delete");
+        let res = await this.request(`users/${username}/recipe/${recipe_id}`, {}, "delete");
         return res;
     }
 

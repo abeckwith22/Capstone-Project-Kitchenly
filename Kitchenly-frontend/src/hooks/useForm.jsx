@@ -55,7 +55,39 @@ const useForm = (INITIAL_STATE={}) => {
         // setFormData(INITIAL_STATE);
     }
 
-    return { handleChange, handleSignUp, handleLogin, handleSearch, handleCreateRecipe, formData };
+    const handleEditProfile = async e => {
+        e.preventDefault();
+        const data = {};
+        Object.keys(formData).map(key => { // gets rid of undefined values
+            if(formData[key]){
+                data[key] = formData[key];
+            }
+        })
+        const result = await KitchenlyApi.patchUser(user.username, data);
+        setLoggedIn(false);
+        const authorized = await login(user.token);
+        if(authorized) {
+            setLoggedIn(true);
+        }
+        navigate("/profile");
+    }
+
+    const handleDeleteUser = async e => {
+        e.preventDefault();
+        console.debug(formData);
+        const result = await KitchenlyApi.deleteUser(user.username);
+        setLoggedIn(false);
+        navigate("/login");
+    }
+
+    return { handleChange, 
+             handleSignUp, 
+             handleLogin, 
+             handleSearch, 
+             handleCreateRecipe, 
+             handleEditProfile,
+             handleDeleteUser,
+             formData };
 }
 
 export default useForm;

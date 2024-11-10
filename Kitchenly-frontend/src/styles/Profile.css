@@ -15,6 +15,10 @@
     color: var(--color-font);
 }
 
+.ProfileSubmitted {
+    list-style: none;
+}
+
 .EditButton {
     background-color: var(--color-button-edit);
 }

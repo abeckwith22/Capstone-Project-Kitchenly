@@ -10,7 +10,6 @@ const ErrorElement = () => {
 
     return (
         <>
-            <NavBarElement/>
             <div className="container">
                 <div id="errorElement">
                     <div className="error">

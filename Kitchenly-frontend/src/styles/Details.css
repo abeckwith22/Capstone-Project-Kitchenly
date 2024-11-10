@@ -14,6 +14,13 @@
     background-color: var(--color-form-bg);
 }
 
+.DetailMeta {
+}
+
+.DetailHeader {
+    display: inline;
+}
+
 .DetailInfo {
     margin-top: 1em;
 }
@@ -58,4 +65,14 @@
 
 #RecipeDetailTitle {
     display: inline;
+}
+
+.Favorite {
+    position: absolute;
+    right: 0px;
+    top: -2em;
+}
+
+.FavoriteContainer {
+    position: relative;
 }
