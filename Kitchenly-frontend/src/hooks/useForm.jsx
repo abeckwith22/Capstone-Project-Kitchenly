@@ -55,6 +55,21 @@ const useForm = (INITIAL_STATE={}) => {
         // setFormData(INITIAL_STATE);
     }
 
+    const handleEditRecipe = async e => {
+        e.preventDefault();
+        console.debug(formData);
+        // const updatedRecipe = await KitchenlyApi.updateRecipe()
+    }
+
+    const handleDeleteRecipe = async e => {
+        e.preventDefault();
+        console.debug("username:", user.username);
+        console.debug("recipe_id:", formData.recipe_id);
+        const result = await KitchenlyApi.deleteRecipe(user.username, formData.recipe_id);
+        console.debug(result);
+        navigate("/");
+    }
+
     const handleEditProfile = async e => {
         e.preventDefault();
         const data = {};
@@ -85,6 +100,8 @@ const useForm = (INITIAL_STATE={}) => {
              handleLogin, 
              handleSearch, 
              handleCreateRecipe, 
+             handleEditRecipe,
+             handleDeleteRecipe,
              handleEditProfile,
              handleDeleteUser,
              formData };

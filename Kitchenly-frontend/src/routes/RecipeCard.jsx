@@ -5,10 +5,6 @@ import { useState } from "react";
 
 const RecipeCard = ({ id, username, title, preparation_time, cooking_time, servings, created_at}) => {
     const navigate = useNavigate();
-    const [update, setUpdate] = useState(false);
-    const { user } = useAuthContext();
-
-    // console.debug(user);
 
     const viewRecipe = async (id) => {
         const recipe = await KitchenlyApi.getRecipe(id);

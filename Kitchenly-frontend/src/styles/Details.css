@@ -14,9 +14,6 @@
     background-color: var(--color-form-bg);
 }
 
-.DetailMeta {
-}
-
 .DetailHeader {
     display: inline;
 }
@@ -42,15 +39,23 @@
 }
 
 .DetailCategories {
-    margin-left: 1em;
     display: inline;
-    /* font-style: italic; */
+}
+
+.DetailCategories span {
+    margin-left: 1em;
+    padding: 0.4em;
+    border: 2px solid var(--color-form-border);
+    border-radius: 20px;
+    background: var(--color-form-bg);
     color: var(--color-categories);
+
 }
 
 .DetailCategories span:hover {
     cursor: pointer;
-    color: var(--color-categories-hover)
+    color: var(--color-categories-hover);
+    background-color: var(--color-categories-hover);
 }
 
 .DetailTags {

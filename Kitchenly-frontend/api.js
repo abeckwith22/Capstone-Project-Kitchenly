@@ -189,7 +189,7 @@ class KitchenlyApi {
 
     /** Deletes recipe */
     static async deleteRecipe(username, recipe_id) {
-        let res = await this.request(`recipes/${username}/${recipe_id}`, "delete");
+        let res = await this.request(`recipes/${username}/${recipe_id}`, {}, "delete");
         return res.result;
     };
 

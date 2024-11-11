@@ -1,4 +1,4 @@
-#Footer {
+/* #Footer {
     position:fixed;
     padding: 1em;
     left: 0;
@@ -6,4 +6,16 @@
     width: 100%;
     background-color: var(--color-bg);
     color: var(--color-font);
+} */
+
+#Footer {
+    color: var(--color-font);
+    margin: 0;
+    padding: 1em;
+    position:fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    background-color: var(--color-bg);
+    overflow: hidden;
 }

@@ -15,12 +15,13 @@
 
   --color-button: #26a641;
   --color-button-active: #006d32;
+  
+  --color-button-edit: #2222bb;
+  --color-button-border: #bbbbbb;
+  --color-button-edit-hover: #000099;
 
-  --color-button-edit: #54AEFF;
-  --color-button-edit-hover: #328cdd;
-
-  --color-button-delete: #ff003b;
-  --color-button-delete-hover: #cc003b;
+  --color-button-delete: #cc033b;
+  --color-button-delete-hover: #aa003b;
   
   --color-form-bg: #161b22;
   --color-form-label: #b6e3ff;
@@ -47,4 +48,10 @@
 body {
   background-color: var(--color-body-bg);
   min-height: 700px;
+  margin-bottom: 100px;
+}
+
+.LoadingScreen {
+  color:white;
+  text-align: center;
 }

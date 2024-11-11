@@ -1,9 +1,11 @@
 import "../styles/Form.css";
 import useForm from "../hooks/useForm";
 import useAuthContext from "../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 const FormEditProfile = () => {
     const { user } = useAuthContext();
+    const [loaded, setLoaded] = useState(false);
 
     const INITIAL_DATA = {
         password: "",
@@ -12,8 +14,13 @@ const FormEditProfile = () => {
         last_name: "",
         email: "",
     }
-
     const { handleChange, handleEditProfile } = useForm(INITIAL_DATA);
+    
+    useEffect(() => {
+        if(Object.keys(user).length > 0) setLoaded(true);
+    }, [user]);
+
+    if(!loaded) return;
 
     return (
         <div className="FormContainer">

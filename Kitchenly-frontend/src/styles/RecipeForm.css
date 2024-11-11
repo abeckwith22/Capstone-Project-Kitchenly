@@ -1,0 +1,17 @@
+.RecipeFormContainerReal {
+    background-color: red;
+}
+
+.RecipeFormContainer {
+    background-color: blue;
+    display: flex;
+}
+
+.RecipeForm {
+    color: var(--color-font);
+    margin: 2em;
+    height: 50vh;
+    background-color: var(--color-form-bg);
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+}

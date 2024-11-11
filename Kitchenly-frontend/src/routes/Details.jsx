@@ -1,34 +1,53 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "../styles/Details.css";
 import KitchenlyApi from "../../api";
 import { useAuthContext } from "../helpers/AuthProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Details = () => {
     const navigate = useNavigate();
     const [update, setUpdate] = useState(false);
+    const [favorite, setFavorite] = useState(false);
+    const [isUsersRecipe, setIsUsersRecipe] = useState(false);
     const { user } = useAuthContext();
     const { state } = useLocation();
     const { recipe } = state;
 
-    const isFavorite = (id) => {
-        const favorites = user.favorites;
-        for(let r of favorites) {
-            if(r.id === id){
-                return true;
+    useEffect(() => {
+        const isFavorite = () => {
+            for(const r of user.favorites) {
+                if(r.id === recipe.id){
+                    setFavorite(true);
+                    return true;
+                }
             }
+            setFavorite(false);
+            return false
         }
-        return false;
-    }
+
+        const isUsers = () => {
+            for(const r of user.recipes) {
+                if(r.id === recipe.id){
+                    setIsUsersRecipe(true);
+                    return true;
+                }
+            }
+            setFavorite(false);
+            return false;
+        }
+
+        isUsers();
+        isFavorite();
+    }, []);
 
     const saveRecipe = async (id) => {
         const res = await KitchenlyApi.saveRecipe(user.username, id);
-        setUpdate(!update);
+        setFavorite(true);
     }
 
     const unsaveRecipe = async (id) => {
         const res = await KitchenlyApi.unsaveRecipe(user.username, id);
-        setUpdate(!update);
+        setFavorite(false);
     }
 
     const formatDate = (time) => {
@@ -67,7 +86,7 @@ const Details = () => {
                         </div>
                     </div>
                     <div className="FavoriteContainer">
-                        {isFavorite(recipe.id) ? (
+                        {favorite ? (
                             <div onClick={() => unsaveRecipe(recipe.id)} className="Favorite RecipeIsFavorite">
                                 <span id="starTrue">&#9733;</span>
                             </div>
@@ -106,9 +125,20 @@ const Details = () => {
                             ))}
                         </div>
                     </div>
+
                     <div className="DetailDescription">
                         <p>{recipe.recipe_description}</p>
                     </div>
+                    {
+                        isUsersRecipe ? (
+                            <div className="DetailOptions">
+                                <button onClick={() => navigate(`/recipes/${recipe.id}/edit`, { state: { recipe: recipe }})} className="ProfileButton EditButton">Edit Recipe</button>
+                                <button onClick={() => navigate(`/recipes/${recipe.id}/delete`, { state: { recipe: recipe }})} className="ProfileButton DeleteButton">Delete Recipe</button>
+                            </div>
+                        ) : (
+                            ""
+                        )
+                    }
                 </div>
             </div>
         </div>
