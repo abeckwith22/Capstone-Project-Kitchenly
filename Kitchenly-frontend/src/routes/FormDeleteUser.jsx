@@ -9,6 +9,7 @@ const FormDeleteUser = () => {
     const [loaded, setLoaded] = useState(false);
     
     const { handleDeleteUser } = useForm();
+
     useEffect(() => {
         if(Object.keys(user).length > 0) setLoaded(true);
     }, [user]);
@@ -23,13 +24,13 @@ const FormDeleteUser = () => {
                     <p id="warning-msg">Changes cannot be undone.</p>
                 </div>
                 <div className="ConfirmFormContainer">
-                    <form onSubmit={handleDeleteUser}>
+                    <form>
                         <div className="ConfirmForm">
                             <div className="ConfirmInput">
-                                <button onClick={() => navigate(`/recipes/${recipe.id}`)} className="ProfileButton EditButton">Cancel</button>
+                                <button onClick={() => navigate(`/profile`)} className="ProfileButton EditButton">Cancel</button>
                             </div>
                             <div className="ConfirmInput">
-                                <button className="ProfileButton DeleteButton">Delete user</button>
+                                <button onClick={handleDeleteUser} className="ProfileButton DeleteButton">Delete user</button>
                             </div>
                         </div>
                     </form>

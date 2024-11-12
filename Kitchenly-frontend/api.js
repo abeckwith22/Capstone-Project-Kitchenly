@@ -99,6 +99,7 @@ class KitchenlyApi {
     **/
     static async saveRecipe(username, recipe_id) {
         let res = await this.request(`users/${username}/recipe/${recipe_id}`, {}, "post");
+        console.debug(res);
         return res;
     }
 
@@ -108,6 +109,7 @@ class KitchenlyApi {
     **/
     static async unsaveRecipe(username, recipe_id) {
         let res = await this.request(`users/${username}/recipe/${recipe_id}`, {}, "delete");
+        console.debug(res);
         return res;
     }
 
@@ -209,9 +211,36 @@ class KitchenlyApi {
      *  - Admin
      *  - same-user
      */
-    static async updateRecipe(username, recipe_id, data) {
-        let res = await this.request(`recipes/${username}/${recipe_id}`, data, "patch");
-        return res.result;
+    static async updateRecipe(username, recipe_id, recipe) {
+        const recipeIngredients = recipe.ingredients || [];
+        const recipeTags = recipe.tags || [];
+
+        const ingredients = [];
+        const tags = [];
+
+        // await ingredients.map(async i => await this.createIngredient(i));
+        // await tags.map(async t => await this.createTag(t));
+
+        if(recipeIngredients.length > 0){
+            for(const i of recipeIngredients) {
+                const result = await this.createIngredient(i);
+                ingredients.push(result.id);
+            }
+        }
+        if(recipeTags.length > 0){
+            for(const t of recipeTags) {
+                const result = await this.createTag(t);
+                tags.push(result.id);
+            }
+        }
+
+        console.debug(ingredients);
+        console.debug(tags);
+        recipe.ingredients = ingredients;
+        recipe.tags = tags;
+        console.debug(recipe);
+        const res = await this.request(`recipes/${username}/${recipe_id}`, recipe, "patch");
+        return res.recipe;
     };
 
     /** Deletes recipe */

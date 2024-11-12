@@ -8,7 +8,7 @@ const Details = () => {
     const navigate = useNavigate();
     const [favorite, setFavorite] = useState(false);
     const [isUsersRecipe, setIsUsersRecipe] = useState(false);
-    const { user } = useAuthContext();
+    const { user, refreshUser } = useAuthContext();
     const { state } = useLocation();
     const { recipe } = state;
 
@@ -42,11 +42,13 @@ const Details = () => {
     const saveRecipe = async (id) => {
         const res = await KitchenlyApi.saveRecipe(user.username, id);
         setFavorite(true);
+        refreshUser(user.token);
     }
 
     const unsaveRecipe = async (id) => {
         const res = await KitchenlyApi.unsaveRecipe(user.username, id);
         setFavorite(false);
+        refreshUser(user.token);
     }
 
     const formatDate = (time) => {

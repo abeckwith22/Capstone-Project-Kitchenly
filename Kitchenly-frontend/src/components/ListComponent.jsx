@@ -8,7 +8,7 @@ const ListComponent = ({ items }) => {
             <div className="ListComponentContainer">
                 <div className="ListComponent">
                     {items.map(i => {
-                        return <ListItem key={i.id || uuid()} name={i}/>
+                        return <ListItem key={uuid()} name={i}/>
                     })}
                 </div>
             </div>

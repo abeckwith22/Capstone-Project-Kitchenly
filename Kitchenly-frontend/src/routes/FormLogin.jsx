@@ -27,7 +27,7 @@ const FormLogin = () => {
                                 <label htmlFor="password">Password</label>
                                 <input onChange={handleChange} id="password" name="password" type="password" />
                             </div>
-                            <div className="FormSubmit">
+                            <div className="">
                                 <button className="FormButton">Sign in</button>
                             </div>
                         </div>

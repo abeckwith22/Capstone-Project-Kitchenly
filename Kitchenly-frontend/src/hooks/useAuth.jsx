@@ -21,6 +21,22 @@ const useAuth = () => {
         authUser();
     }, []);
 
+    const refreshUser = async (token) => {
+        try {
+            const { username } = jwtDecode(token);
+            const user = await KitchenlyApi.getUser(username);
+            if(!user.status) {
+                user.token = token;
+                setUser(user);
+                return true;
+            }
+        } catch (error) {
+            console.error("Failed to refresh user:", error);
+        }
+
+        return false;
+    }
+
     // setLoggedIn to true, set user, save token to localStorage
     const login = async (token) => {
         try {
@@ -47,7 +63,7 @@ const useAuth = () => {
         KitchenlyApi.setToken("");
     };
 
-    return { user, isLoaded, loggedIn, setLoggedIn, login, logout, checkLocalStorage, };
+    return { user, isLoaded, loggedIn, setLoggedIn, login, logout, checkLocalStorage, refreshUser };
 };
 
 export default useAuth;

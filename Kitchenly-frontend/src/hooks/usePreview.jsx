@@ -1,4 +1,5 @@
 import "../styles/Details.css";
+import { v4 as uuid } from "uuid";
 
 const usePreview = (recipe) => {
 
@@ -24,7 +25,7 @@ const usePreview = (recipe) => {
                         <div className="DetailCategories">
                             {recipe.categories && recipe.categories.length > 0 ? (
                                 recipe.categories.map(c => (
-                                    <span>{c}</span>
+                                    <span key={uuid()}>{c}</span>
                                 ))
                             ) : (
                                 ""
@@ -41,7 +42,7 @@ const usePreview = (recipe) => {
                         <p>
                             {recipe.tags.length > 0 ? (
                                 recipe.tags.map(t => (
-                                    <span>#{t} </span>
+                                    <span key={uuid()}>#{t} </span>
                                 ))
                             ) : (
                                 ""
@@ -65,7 +66,7 @@ const usePreview = (recipe) => {
                         <div className="DetailIngredients">
                             {recipe.ingredients.length > 0 ? (
                                 recipe.ingredients.map(i => (
-                                    <p>{i}</p>
+                                    <p key={uuid()}>{i}</p>
                                 ))
                             ) : (
                                 ""

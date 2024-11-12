@@ -5,37 +5,42 @@ import { useState, useEffect } from "react";
 import "../styles/RecipeForm.css";
 import ListComponent from "../components/ListComponent";
 import KitchenlyApi from "../../api";
+import { useLocation } from "react-router-dom";
 
-const FormCreateRecipe = () => {
+const FormEditRecipe = () => {
 
+    const { state } = useLocation();
+    const { recipe } = state;
     const [page, setPageKey] = useState("ingredient");
 
-    const [ingredients, setIngredients] = useState([]);
-    const [tags, setTags] = useState([]);
+    const [ingredients, setIngredients] = useState([...recipe.ingredients.map(i => i.ingredient_name)]);
+    const [tags, setTags] = useState([...recipe.tags.map(t => t.tag_name)]);
     const [loaded, setLoaded] = useState(true);
-    
-    const INITIAL_DATA = {
-        title: "",
-        recipe_description: "",
-        preparation_time:0,
-        cooking_time:0,
-        servings:0,
-        ingredient_name: "",
-        tag_name: "",
-        ingredients: [],
-        tags: [],
-    }
-
-    const { handleChange, handleCreateRecipe, createRecipeDraft, formData, setFormData} = useForm(INITIAL_DATA);
     
     useEffect(() => {
         const getAll = async () => {
-            setIngredients([]);
-            setTags([]);
             setLoaded(true);
+            console.debug(recipe);
         }
         getAll();
     }, []);
+
+    const INITIAL_DATA = {
+        title: recipe.title,
+        recipe_description: recipe.recipe_description,
+        preparation_time:recipe.preparation_time,
+        cooking_time:recipe.cooking_time,
+        servings:recipe.servings,
+        ingredient_name: "",
+        tag_name: "",
+        ingredients: ingredients,
+        tags: tags,
+    }
+
+    const { handleChange, handleEditRecipe, createRecipeDraft, formData, setFormData} = useForm(INITIAL_DATA);
+
+    const handleRemoveItem = (item, arr) => {
+    }
 
     const handleAddIngredient = e => {
         e.preventDefault();
@@ -84,7 +89,7 @@ const FormCreateRecipe = () => {
             <>
                 <div className="options-list">
                     {addItemForm("ingredient")}
-                    <ListComponent key="ingredient" items={ingredients}/>
+                    <ListComponent items={ingredients}/>
                 </div>
             </>
         );
@@ -94,7 +99,7 @@ const FormCreateRecipe = () => {
         return (
             <div className="options-list">
                 {addItemForm("tag")}
-                <ListComponent key="tags" items={tags}/>
+                <ListComponent items={tags}/>
             </div>
         );
     };
@@ -132,7 +137,7 @@ const FormCreateRecipe = () => {
                                     <input onChange={handleChange} id="servings" name="servings" value={formData.servings}/>
                                 </div>
                                 <div className="FormInput">
-                                    <button className="FormSubmit" onClick={(e) => handleCreateRecipe(e, ingredients, tags)}>Submit</button>
+                                    <button className="FormSubmit" onClick={(e) => handleEditRecipe(e, recipe.id, ingredients, tags)}>Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -157,4 +162,4 @@ const FormCreateRecipe = () => {
     );
 }
 
-export default FormCreateRecipe;
+export default FormEditRecipe;

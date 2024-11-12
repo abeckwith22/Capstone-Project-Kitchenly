@@ -6,8 +6,11 @@ import { useAuthContext } from "../helpers/AuthProvider";
 const useForm = (INITIAL_STATE={}) => {
     const [formData, setFormData] = useState(INITIAL_STATE);
     const navigate = useNavigate();
-    const { user, login, setLoggedIn } = useAuthContext();
+    const { user, login, logout, setLoggedIn, refreshUser } = useAuthContext();
     
+
+    /********** Generic *********/
+
     const handleChange = e => {
         let { name, value } = e.target;
         const intTerms = ['preparation_time', 'cooking_time', 'servings'];
@@ -48,6 +51,8 @@ const useForm = (INITIAL_STATE={}) => {
         navigate("/recipes", { state: { recipes: recipes }});
     }
 
+    /********** Recipes *********/
+
     const handleCreateRecipe = async (e,ingredients=[],tags=[]) => {
         e.preventDefault();
         formData.ingredients = sanitize(ingredients);
@@ -59,6 +64,7 @@ const useForm = (INITIAL_STATE={}) => {
         const newRecipe = await KitchenlyApi.createRecipe(user.username, formData);
         console.debug(newRecipe);
         setFormData(INITIAL_STATE);
+        refreshUser(user.token);
     }
 
     const createRecipeDraft = (ingredients=[], tags=[]) => {
@@ -67,30 +73,6 @@ const useForm = (INITIAL_STATE={}) => {
         formData.tags = sanitize(tags);
 
         return formData;
-    }
-
-    const clearIngredientName = () => {
-        const fd = {
-            ...formData
-        };
-
-        console.debug(fd);
-
-        if(fd.ingredient_name) {
-            fd.ingredient_name = "";
-        }
-
-        setFormData(fd);
-    }
-
-    const clearTagName = e => {
-        const fd = {
-            ...formData
-        };
-        console.debug(fd);
-        fd.tag_name = "";
-        console.debug(fd);
-        setFormData(() => fd);
     }
 
     const sanitize = (arr) => {
@@ -103,10 +85,19 @@ const useForm = (INITIAL_STATE={}) => {
         return newArr;
     }
 
-    const handleEditRecipe = async e => {
+    const handleEditRecipe = async (e, recipe_id=0, ingredients=[], tags=[]) => {
         e.preventDefault();
         console.debug(formData);
-        // const updatedRecipe = await KitchenlyApi.updateRecipe()
+        formData.ingredients = sanitize(ingredients);
+        formData.tags = sanitize(tags);
+
+        delete formData.ingredient_name;
+        delete formData.tag_name;
+
+        const updatedRecipe = await KitchenlyApi.updateRecipe(user.username, recipe_id, formData);
+        console.debug(updatedRecipe);
+        setFormData(INITIAL_STATE);
+        refreshUser(user.token);
     }
 
     const handleDeleteRecipe = async e => {
@@ -115,8 +106,11 @@ const useForm = (INITIAL_STATE={}) => {
         console.debug("recipe_id:", formData.recipe_id);
         const result = await KitchenlyApi.deleteRecipe(user.username, formData.recipe_id);
         console.debug(result);
+        refreshUser(user.token);
         navigate("/");
     }
+
+    /********** Users *********/
 
     const handleEditProfile = async e => {
         e.preventDefault();
@@ -139,6 +133,7 @@ const useForm = (INITIAL_STATE={}) => {
         e.preventDefault();
         console.debug(formData);
         const result = await KitchenlyApi.deleteUser(user.username);
+        logout();
         setLoggedIn(false);
         navigate("/login");
     }
@@ -156,8 +151,6 @@ const useForm = (INITIAL_STATE={}) => {
         handleDeleteUser,
         formData,
         setFormData,
-        clearIngredientName,
-        clearTagName,
     };
 }
 

@@ -17,15 +17,18 @@ import RecipeList from "./routes/RecipeList";
 import Details from "./routes/Details";
 
 // Forms
-import FormCreateRecipe from "./routes/FormCreateRecipe";
-import FormLogin from "./routes/FormLogin";
 import FormSignUp from "./routes/FormSignUp";
+import FormLogin from "./routes/FormLogin";
+
+import FormEditProfile from "./routes/FormEditProfile";
+import FormDeleteUser from "./routes/FormDeleteUser";
+
+import FormCreateRecipe from "./routes/FormCreateRecipe";
+import FormEditRecipe from "./routes/FormEditRecipe";
+import FormDeleteRecipe from "./routes/FormDeleteRecipe";
 
 /* error components */
 import ErrorElement from "./components/ErrorElement";
-import FormEditProfile from "./routes/FormEditProfile";
-import FormDeleteUser from "./routes/FormDeleteUser";
-import FormDeleteRecipe from "./routes/FormDeleteRecipe";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +72,7 @@ const router = createBrowserRouter([
           },
           {
             path: "/recipes/:recipe_id/edit",
+            element: <FormEditRecipe/>
           },
           {
             path: "/recipes/:recipe_id/delete",

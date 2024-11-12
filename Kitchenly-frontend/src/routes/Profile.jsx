@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../helpers/AuthProvider";
 import "../styles/Profile.css";
 import RecipeBar from "./RecipeBar";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-    const { user, isLoaded } = useAuthContext();
+    const { user, isLoaded, refreshUser} = useAuthContext();
     const [pageKey, setPageKey] = useState("submitted");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        refreshUser(user.token);
+    }, []);
     
     if(!isLoaded) return <div className="LoadingScreen"><h1>Loading!</h1></div>;
 
