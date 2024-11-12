@@ -27,6 +27,17 @@ const FormCreateRecipe = () => {
     }
 
     const { handleChange, handleCreateRecipe, createRecipeDraft, formData, setFormData} = useForm(INITIAL_DATA);
+
+    const handleRemove = (name="", type="") => {
+        if(type === "ingredient"){
+            const copy = ingredients.filter(i => i !== name);
+            setIngredients(copy);
+        }
+        if(type === "tag"){
+            const copy = tags.filter(t => t !== name);
+            setTags(copy);
+        }
+    }
     
     useEffect(() => {
         const getAll = async () => {
@@ -84,7 +95,7 @@ const FormCreateRecipe = () => {
             <>
                 <div className="options-list">
                     {addItemForm("ingredient")}
-                    <ListComponent key="ingredient" items={ingredients}/>
+                    <ListComponent key="ingredient" handleRemove={handleRemove} items={ingredients} type="ingredient"/>
                 </div>
             </>
         );
@@ -94,7 +105,7 @@ const FormCreateRecipe = () => {
         return (
             <div className="options-list">
                 {addItemForm("tag")}
-                <ListComponent key="tags" items={tags}/>
+                <ListComponent key="tags" handleRemove={handleRemove} items={tags} type="tag"/>
             </div>
         );
     };

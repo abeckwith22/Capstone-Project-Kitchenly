@@ -102,7 +102,7 @@ const Details = () => {
                     <div className="DetailTags">
                         <p>
                             {recipe.tags.map(t => (
-                                <span onClick={async () => await gotoTag(t.id)} key={t.id}>{t.tag_name} </span>
+                                <span onClick={async () => await gotoTag(t.id)} key={t.id}>#{t.tag_name} </span>
                             ))}
                         </p>
                     </div>
