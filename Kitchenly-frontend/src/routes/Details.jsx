@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 const Details = () => {
     const navigate = useNavigate();
-    const [update, setUpdate] = useState(false);
     const [favorite, setFavorite] = useState(false);
     const [isUsersRecipe, setIsUsersRecipe] = useState(false);
     const { user } = useAuthContext();

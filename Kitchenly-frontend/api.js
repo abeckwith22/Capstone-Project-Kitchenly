@@ -122,8 +122,25 @@ class KitchenlyApi {
      * 
     */
     static async createRecipe(username, recipe) {
-        let res = await this.request(`recipes/${username}`, recipe, "post")
-        return res.recipe;
+        const tags = recipe.tags || [];
+        const ingredients = recipe.ingredients || [];
+        // const createdTags = tags.map(t => (this.createTag(t)));
+        // const createdIngredients = ingredients.map(i => (this.createIngredient(i)));
+
+        const createdTags = tags.map(async (t) => {
+            const exists = await this.getTagAll(t);
+            console.debug(exists);
+            if(!exists.length > 0) {
+                const tag = await this.createTag(t);
+                console.log(tag);
+            }
+        })
+
+
+
+        console.debug(createdTags);
+        // let res = await this.request(`recipes/${username}`, recipe, "post")
+        // return res.recipe;
     };
 
     /** Gets recipes with recipe_id */
@@ -201,13 +218,13 @@ class KitchenlyApi {
      * - logged-in
      */
     static async createTag(tag_name) {
-        let res = await this.request(`tags/`, tag_name, "post");
+        let res = await this.request(`tags/`, {tag_name: tag_name}, "post");
         return res.tag;
     }
 
     /** Gets all tags */
-    static async getTagAll() {
-        let res = await this.request(`tag/`);
+    static async getTagAll(tag_name="") {
+        let res = await this.request(`tags/`, {tag_name});
         return res.tags;
     }
 
@@ -242,6 +259,22 @@ class KitchenlyApi {
     static async deleteTag(tag_id) {
         let res = await this.request(`tag/${tag_id}`, "delete");
         return res.result;
+    }
+
+    /******************* Category routes ****************************************/
+    static async getCategories() {
+        let res = await this.request(`categories`);
+        return res.categories;
+    }
+    /******************* Ingredient routes **************************************/
+    static async createIngredient(name) {
+        let res = await this.request(`ingredients`, { ingredient_names: [name] }, "post");
+        return res;
+    }
+
+    static async getIngredients() {
+        let res = await this.request(`ingredients`);
+        return res.ingredients;
     }
 }
 

@@ -57,7 +57,7 @@ class Ingredient {
 
         if(ingredient_name !== undefined){
             queryValues.push(`%${ingredient_name}`);
-            whereExpressions.push(`ingredient_name ILIKE $${queryValues.length}`);
+            whereExpressions.push(`ingredient_name=$${queryValues.length}`);
         }
         if(whereExpressions.length > 0){
             query += " WHERE " + whereExpressions.join(" AND ");

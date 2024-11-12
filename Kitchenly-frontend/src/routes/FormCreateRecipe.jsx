@@ -1,105 +1,152 @@
 import "../styles/Form.css";
 import useForm from "../hooks/useForm";
-import { useState } from "react";
+import usePreview from "../hooks/usePreview";
+import { useState, useEffect } from "react";
 import "../styles/RecipeForm.css";
+import ListComponent from "../components/ListComponent";
+import KitchenlyApi from "../../api";
 
 const FormCreateRecipe = () => {
 
-    const [page, setPageKey] = useState("ingredients");
+    const [page, setPageKey] = useState("ingredient");
 
-    const loadIngredients = () => {
-        return (
-            <div className="">
-                <h1>Ingredients page!</h1>
-            </div>
-        )
-    }
-
-    const loadTags = () => {
-        return (
-            <div className="">
-                <h1>Tags page!</h1>
-            </div>
-        )
-    }
-
-    const loadCategories = () => {
-        return (
-            <div className="">
-                <h1>Categories page!</h1>
-            </div>
-        )
-    }
-
-
+    const [ingredients, setIngredients] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [loaded, setLoaded] = useState(true);
+    
     const INITIAL_DATA = {
         title: "",
         recipe_description: "",
-        ingredients: [],
-        categories: [],
-        tags: [],
         preparation_time:0,
         cooking_time:0,
-        servings:0
+        servings:0,
+        ingredient_name: "",
+        tag_name: "",
+        ingredients: [],
+        tags: [],
     }
 
-    const { handleChange, handleCreateRecipe } = useForm(INITIAL_DATA);
+    const { handleChange, handleCreateRecipe, createRecipeDraft } = useForm(INITIAL_DATA);
+    
+    useEffect(() => {
+        const getAll = async () => {
+            setIngredients([]);
+            setTags([]);
+            setLoaded(true);
+        }
+        getAll();
+    }, []);
+
+    const handleAddIngredient = e => {
+        e.preventDefault();
+        const { name, value } = e.target[0];
+        if(value.length !== 0 && !ingredients.includes(value)){
+            const copy = [...ingredients];
+            copy.push(value);
+            setIngredients(copy);
+        }
+    }
+
+    const handleAddTag = e => {
+        e.preventDefault();
+        const { name, value } = e.target[0];
+        if(value.length !== 0 && !tags.includes(value)){
+            const copy = [...tags];
+            copy.push(value);
+            setTags(copy);
+        }
+    }
+
+    const handles = {
+        "ingredient":handleAddIngredient,
+        "tag":handleAddTag,
+    }
+
+    if(!loaded) return;
+
+    const addItemForm = (name) => {
+        return (
+            <form className="AddItemForm" onSubmit={handles[name]}>
+                <input className="RecipeInput" onChange={handleChange} min={1} type="text" name={`${name}_name`} placeholder={`Add ${name}`}/>
+                <button className="FormSubmit">+</button>
+            </form>
+        )
+    }
+
+    const ingredientsPage = () => {
+        return (
+            <>
+                <div className="options-list">
+                    {addItemForm("ingredient")}
+                    <ListComponent items={ingredients}/>
+                </div>
+            </>
+        );
+    };
+    
+    const tagsPage= () => {
+        return (
+            <div className="options-list">
+                {addItemForm("tag")}
+                <ListComponent items={tags}/>
+            </div>
+        );
+    };
 
     const pages = {
-        "ingredient":loadIngredients(),
-        "categories":loadCategories(),
-        "tags":loadTags(),
+        "ingredient":ingredientsPage(),
+        "tags":tagsPage(),
     };
 
     return (
         <>
-        <div className="RecipeFormContainerReal">
-            <div className="RecipeFormContainer">
-                <div className="RecipeForm">
-                    <form onSubmit={handleCreateRecipe}>
-                        <div className="FormDiv">
-                            <div className="FormInput">
-                                <label htmlFor="title">Title</label>
-                                <input onChange={handleChange} id="title" name="title"/>
+            <div className="RecipeFormContainerReal">
+                <div className="RecipeFormContainer">
+                    <div className="RecipeForm">
+                        <form>
+                            <div className="FormDiv">
+                                <div className="FormInput">
+                                    <label htmlFor="title">Title</label>
+                                    <input onChange={handleChange} id="title" name="title"/>
+                                </div>
+                                <div className="FormInput">
+                                    <label htmlFor="description">Description</label>
+                                    <input onChange={handleChange} id="description" name="recipe_description"/>
+                                </div>
+                                <div className="FormInput">
+                                    <label htmlFor="prep">Preparation time</label>
+                                    <input onChange={handleChange} id="prep" name="preparation_time"/>
+                                </div>
+                                <div className="FormInput">
+                                    <label htmlFor="cook">Cooking time</label>
+                                    <input onChange={handleChange} id="cook" name="cooking_time"/>
+                                </div>
+                                <div className="FormInput">
+                                    <label htmlFor="servings">Servings</label>
+                                    <input onChange={handleChange} id="servings" name="servings"/>
+                                </div>
+                                <div className="FormInput">
+                                    <button className="FormSubmit" onClick={(e) => handleCreateRecipe(e, ingredients, tags)}>Submit</button>
+                                </div>
                             </div>
-                            <div className="FormInput">
-                                <label htmlFor="description">Description</label>
-                                <input onChange={handleChange} id="description" name="recipe_description"/>
-                            </div>
-                            <div className="FormInput">
-                                <label htmlFor="prep">Preparation time</label>
-                                <input onChange={handleChange} id="prep" name="preparation_time"/>
-                            </div>
-                            <div className="FormInput">
-                                <label htmlFor="cook">Cooking time</label>
-                                <input onChange={handleChange} id="cook" name="cooking_time"/>
-                            </div>
-                            <div className="FormInput">
-                                <label htmlFor="servings">Servings</label>
-                                <input onChange={handleChange} id="servings" name="servings"/>
-                            </div>
+                        </form>
+                    </div>
+                    <div className="ProfileDataContainer">
+                        <div className="ProfileDataContainerNav">
+                            <p className={`NavSlip ${page === "ingredient" ? "selected" : ""}`} onClick={() => setPageKey("ingredient")}>Ingredients</p>
+                            <p className={`NavSlip ${page === "tags" ? "selected" : ""}`} onClick={() => setPageKey("tags")}>Tags</p>
                         </div>
-                    </form>
-                </div>
-                <div className="ProfileDataContainer">
-                    <div className="RecipeFormContainer">
-                    </div>
-                    <div className="ProfileDataContainerNav">
-                        <p className={`NavSlip ${page === "ingredient" ? "selected" : ""}`} onClick={() => setPageKey("ingredient")}>Ingredients</p>
-                        <p className={`NavSlip ${page === "categories" ? "selected" : ""}`} onClick={() => setPageKey("categories")}>Categories</p>
-                        <p className={`NavSlip ${page === "tags" ? "selected" : ""}`} onClick={() => setPageKey("tags")}>Tags</p>
-                    </div>
-                    <div className="ProfileDataInfoContainer">
-                        {
-                            pages[page]
-                        }
+                        <div className="ProfileDataInfoContainer">
+                            {
+                                pages[page]
+                            }
+                        </div>
                     </div>
                 </div>
-
                 <div className="RecipePreview">
+                    {usePreview(createRecipeDraft(ingredients, tags))}
                 </div>
             </div>
-        </div>
         </>
     );
 }

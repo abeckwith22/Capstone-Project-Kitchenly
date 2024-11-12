@@ -1,17 +1,83 @@
 .RecipeFormContainerReal {
-    background-color: red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .RecipeFormContainer {
-    background-color: blue;
+    margin: 2em;
+    padding: 1em;
     display: flex;
 }
 
 .RecipeForm {
+    margin-right: 2em;
     color: var(--color-font);
-    margin: 2em;
     height: 50vh;
     background-color: var(--color-form-bg);
     border: 1px solid var(--color-form-border);
     border-radius: 5px;
+}
+
+.options-list {
+    font-weight: bold;
+    height: 100%;
+}
+
+.RecipeInput {
+    width: 75%;
+    padding: 1em;
+    border-style: none;
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+    background-color: var(--color-form-input);
+    color: var(--color-font);
+}
+
+.FormSubmit {
+    cursor: pointer;
+    margin: 0em 0em;
+    padding: 0.5em 0em;
+    border: 1px solid var(--color-font);
+    width: 100%;
+    color: var(--color-font);
+    border-radius: 5px;
+    background-color: var(--color-button);
+}
+
+.AddItemForm button {
+    font-size: large;
+    font-weight: bold;
+    width: 45px;
+    height: 45px;
+}
+
+.FormSubmit:hover {
+    background-color: #006d32;
+}
+
+
+
+.ListItem {
+    margin: 0.5em 0em;
+    padding: 1em;
+    text-align: center;
+    font-size: small;
+    background-color: var(--color-form-input);
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px; 
+}
+
+.option {
+    cursor: pointer;
+    margin: 0.5em 0em;
+}
+
+.option p {
+    border: 1px solid var(--color-form-border);
+    border-radius: 5px;
+    padding: 0.2em 0em;
+    text-align: center;
+    width: 50%;
+    background-color: var(--color-form-input);
 }

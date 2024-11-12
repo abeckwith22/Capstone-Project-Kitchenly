@@ -48,11 +48,59 @@ const useForm = (INITIAL_STATE={}) => {
         navigate("/recipes", { state: { recipes: recipes }});
     }
 
-    const handleCreateRecipe = async e => {
+    const handleCreateRecipe = async (e,ingredients=[],tags=[]) => {
         e.preventDefault();
+        formData.ingredients = sanitize(ingredients);
+        formData.tags = sanitize(tags);
+        
+        delete formData.ingredient_name;
+        delete formData.tag_name;
+        
         const newRecipe = await KitchenlyApi.createRecipe(user.username, formData);
         console.debug(newRecipe);
-        // setFormData(INITIAL_STATE);
+        setFormData(INITIAL_STATE);
+    }
+
+    const createRecipeDraft = (ingredients=[], tags=[]) => {
+
+        formData.ingredients = sanitize(ingredients);
+        formData.tags = sanitize(tags);
+
+        return formData;
+    }
+
+    const clearIngredientName = () => {
+        const fd = {
+            ...formData
+        };
+
+        console.debug(fd);
+
+        if(fd.ingredient_name) {
+            fd.ingredient_name = "";
+        }
+
+        setFormData(fd);
+    }
+
+    const clearTagName = e => {
+        const fd = {
+            ...formData
+        };
+        console.debug(fd);
+        fd.tag_name = "";
+        console.debug(fd);
+        setFormData(() => fd);
+    }
+
+    const sanitize = (arr) => {
+        const newArr = arr.filter(i => {
+            const str = i.trim();
+            if(str !== undefined && str !== "") {
+                return str;
+            }
+        })
+        return newArr;
     }
 
     const handleEditRecipe = async e => {
@@ -95,16 +143,22 @@ const useForm = (INITIAL_STATE={}) => {
         navigate("/login");
     }
 
-    return { handleChange, 
-             handleSignUp, 
-             handleLogin, 
-             handleSearch, 
-             handleCreateRecipe, 
-             handleEditRecipe,
-             handleDeleteRecipe,
-             handleEditProfile,
-             handleDeleteUser,
-             formData };
+    return { 
+        handleChange, 
+        handleSignUp, 
+        handleLogin, 
+        handleSearch, 
+        handleCreateRecipe, 
+        createRecipeDraft,
+        handleEditRecipe,
+        handleDeleteRecipe,
+        handleEditProfile,
+        handleDeleteUser,
+        formData,
+        setFormData,
+        clearIngredientName,
+        clearTagName,
+    };
 }
 
 export default useForm;

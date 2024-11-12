@@ -43,7 +43,8 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", ensureLoggedIn, async function (req, res, next) {
     try {
-        const ingredients = await Ingredient.findAll();
+        const data = Object.keys(req.body) > 0 ? req.body : req.query;
+        const ingredients = await Ingredient.findAll(data);
         return res.status(200).json({ ingredients: ingredients });
     } catch (err) {
         return next(err);
