@@ -78,7 +78,7 @@ async function commonBeforeAll() {
   ];
   
   // create ingredients
-  const ingredients = await Ingredient.create({ ingredient_names: ingredients_arr });
+  const ingredients = await Ingredient.createMultiple({ ingredient_names: ingredients_arr });
   ingredientIds.push(...ingredients.map(i => i.id));
   
   // create categories

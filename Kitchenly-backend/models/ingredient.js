@@ -10,7 +10,7 @@ class Ingredient {
      * data should be [{ ingredient_name }, ...]
      * returns [{ id, ingredient_name }, ...]
     */
-    static async create(data) {
+    static async createMultiple(data) {
         // if data is empty/doesn't exist and it's length is zero
         // if(!data || !data.length > 0) throw new BadRequestError("Invalid/Empty data passed:", data);
 
@@ -25,6 +25,34 @@ class Ingredient {
         let ingredients = result.rows;
 
         // console.debug(ingredients);
+
+        return ingredients;
+    }
+
+    /** Search database for ingredient_name (has to be exact), if found, return it, otherwise create
+     * the ingredient and return the object.
+     */
+    static async create(data) {
+        const name = data.ingredient_name;
+        const selectQuery = `
+            SELECT *
+            FROM ingredients
+            WHERE ingredient_name=$1
+        `;
+
+        const selectResult = await db.query(selectQuery, [name]);
+
+        if(selectResult.rows[0]) return selectResult.rows[0]; // meaning this ingredient doesn't exist.
+
+        const insertQuery = `
+            INSERT INTO ingredients (ingredient_name)
+            VALUES ($1)
+            RETURNING *
+        `;
+
+        const insertResult = await db.query(insertQuery, [name]);
+
+        let ingredients = insertResult.rows[0];
 
         return ingredients;
     }
@@ -57,7 +85,7 @@ class Ingredient {
 
         if(ingredient_name !== undefined){
             queryValues.push(`%${ingredient_name}`);
-            whereExpressions.push(`ingredient_name=$${queryValues.length}`);
+            whereExpressions.push(`ingredient_name ILIKE $${queryValues.length}`);
         }
         if(whereExpressions.length > 0){
             query += " WHERE " + whereExpressions.join(" AND ");
@@ -66,6 +94,7 @@ class Ingredient {
         // Finalize query and return results
 
         query += " ORDER BY ingredient_name"
+        console.debug(query);
         const ingredientRes = await db.query(query, queryValues);
         return ingredientRes.rows;
     }

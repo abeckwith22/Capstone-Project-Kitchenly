@@ -28,8 +28,8 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
             throw new BadRequestError(errs);
         }
 
-        const ingredients = await Ingredient.create(req.body);
-        return res.status(201).json({ ingredients: ingredients });
+        const ingredient = await Ingredient.create(req.body);
+        return res.status(201).json({ ingredient: ingredient});
     } catch (err) {
         return next(err);
     }
@@ -44,7 +44,8 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 router.get("/", ensureLoggedIn, async function (req, res, next) {
     try {
         const data = Object.keys(req.body) > 0 ? req.body : req.query;
-        const ingredients = await Ingredient.findAll(data);
+        const { ingredient_name } = data;
+        const ingredients = await Ingredient.findAll(ingredient_name);
         return res.status(200).json({ ingredients: ingredients });
     } catch (err) {
         return next(err);

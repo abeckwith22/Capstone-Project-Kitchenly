@@ -17,7 +17,7 @@ function getDatabaseUri() {
 }
 
 // speeding up bcrypt to make testing faster (non-test cases will be 15)
-const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 1 // - NOTE [ ] CHANGE THIS TO HIGHER NUMBER LATER
+const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 15
 
 console.log("Kitchenly Config:".green);
 console.log("SECRET_KEY:".yellow, SECRET_KEY);

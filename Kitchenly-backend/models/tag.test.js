@@ -18,12 +18,23 @@ afterAll(commonAfterAll);
 describe("Tag.create", () => {
     test("creates a new tag", async () => {
         const tag = await Tag.create({
-            tag_name: "tag11",
+            tag_name: "newTag",
         });
         expect(tag).toEqual(
             expect.objectContaining({
-                tag_name: "tag11",
-            })
+                tag_name: "newTag",
+            }),
+        );
+    });
+
+    test("returns tag if already existing in database", async () => {
+        const tag = await Tag.create({
+            tag_name: "tag1",
+        });
+        expect(tag).toEqual(
+            expect.objectContaining({
+                tag_name: "tag1",
+            }),
         );
     });
 });

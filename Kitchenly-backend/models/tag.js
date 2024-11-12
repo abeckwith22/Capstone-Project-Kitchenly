@@ -11,14 +11,28 @@ class Tag {
      * returns { id, tag_name }
     */
     static async create(data) {
-        const result = await db.query(
-            `INSERT INTO tags (tag_name)
-            VALUES ($1)
-            RETURNING id, tag_name`, [data.tag_name]
-        );
-        let tag = result.rows[0];
+        const name = data.tag_name;
+        const selectQuery = `
+            SELECT *
+            FROM tags
+            WHERE tag_name=$1
+        `;
 
-        return tag;
+        const selectResult = await db.query(selectQuery, [name]);
+
+        if(selectResult.rows[0]) return selectResult.rows[0]; // meaning this tag doesn't exist.
+
+        const insertQuery = `
+            INSERT INTO tags (tag_name)
+            VALUES ($1)
+            RETURNING *
+        `;
+
+        const insertResult = await db.query(insertQuery, [name]);
+
+        let tags = insertResult.rows[0];
+
+        return tags;
     }
 
     /** Find all tags (optional filter on searchFilters) 

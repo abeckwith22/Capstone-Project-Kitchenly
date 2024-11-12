@@ -16,13 +16,28 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 describe("Ingredient.create", () => {
+    test("Returns 2 ingredients, one new, one found in select query", async () => {
+        const name1 = "ingredient1";
+        const name2 = "newIngredient";
+        const ingredientTrial1 = await Ingredient.create({ ingredient_name : name1 });
+        const ingredientTrail2 = await Ingredient.create({ ingredient_name : name2 });
+        expect(ingredientTrial1).toEqual(expect.objectContaining({
+            ingredient_name: "ingredient1",
+        }));
+        expect(ingredientTrail2).toEqual(expect.objectContaining({
+            ingredient_name: "newIngredient"
+        }));
+    });
+});
+
+describe("Ingredient.createMultiple", () => {
     test("creates 3 new ingredients", async () => {
         const ingredients_arr = [
             "pesto",
             "apple",
             "milk",
         ];
-        const ingredients = await Ingredient.create({
+        const ingredients = await Ingredient.createMultiple({
             ingredient_names: ingredients_arr
         });
         expect(ingredients).toEqual(expect.arrayContaining([
@@ -38,6 +53,7 @@ describe("Ingredient.create", () => {
         ]));
     });
 });
+
 
 describe("Ingredient.findAll", () => {
     test("retrieves all ingredients", async () => {

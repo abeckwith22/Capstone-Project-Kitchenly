@@ -32,15 +32,13 @@ describe("POST /ingredients", () => {
         const res = await request(app)
         .post(`/ingredients`)
         .send({
-            ingredient_names: ["newIngredient"],
+            ingredient_name: "newIngredient",
         })
         .set("Authorization", `Bearer ${adminToken}`);
         expect(res.body).toEqual({
-            ingredients: expect.arrayContaining([
-                expect.objectContaining({
-                    ingredient_name: "newIngredient",
-                }),
-            ]),
+            ingredient: expect.objectContaining({
+                ingredient_name: "newIngredient",
+            }),
         });
     });
 
@@ -48,15 +46,13 @@ describe("POST /ingredients", () => {
         const res = await request(app)
         .post(`/ingredients`)
         .send({
-            ingredient_names: ["newIngredient"],
+            ingredient_name: "newIngredient",
         })
         .set("Authorization", `Bearer ${u1Token}`);
         expect(res.body).toEqual({
-            ingredients: expect.arrayContaining([
-                expect.objectContaining({
-                    ingredient_name: "newIngredient",
-                }),
-            ]),
+            ingredient: expect.objectContaining({
+                ingredient_name: "newIngredient",
+            }),
         });
     });
 });
